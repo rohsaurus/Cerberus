@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.encryption.encryptionapplication.SceneOneController">
+   <children>
+      <ImageView fitHeight="204.0" fitWidth="223.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="516.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@Cerberus-logos.jpeg" />
+         </image>
+      </ImageView>
+      <Button fx:id="EncryptButton" contentDisplay="CENTER" layoutX="14.0" layoutY="204.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="171.0" prefWidth="204.0" text="Encrypt" wrapText="true" AnchorPane.bottomAnchor="345.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="204.0">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Button>
+      <Button fx:id="DecryptButton" contentDisplay="CENTER" layoutX="14.0" layoutY="370.0" mnemonicParsing="false" prefHeight="181.0" prefWidth="204.0" text="Decrypt" AnchorPane.bottomAnchor="169.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="370.0">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Button>
+      <Button fx:id="KeyPair" contentDisplay="CENTER" layoutX="14.0" layoutY="551.0" mnemonicParsing="false" onAction="#generateKeyPair" prefHeight="171.0" prefWidth="204.0" text="Generate a Key Pair" AnchorPane.bottomAnchor="-2.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="551.0">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Button>
+      <Button fx:id="keyManager" layoutX="1121.0" layoutY="359.0" mnemonicParsing="false" onAction="#keyManager" prefHeight="37.0" prefWidth="234.0" rotate="270.0" text="Manage Keys" AnchorPane.bottomAnchor="305.0" AnchorPane.rightAnchor="-75.0" AnchorPane.topAnchor="359.0">
+         <font>
+            <Font size="27.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
