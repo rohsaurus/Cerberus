@@ -21,26 +21,13 @@ public class privateKeysSQL {
         Connection conn = null;
         try {
             // database params
-            String url = "jdbc:sqlite:/home/rohan/IdeaProjects/Encryption Application/Encryption Application/src/DB/cerberus.sqlite";
+            String url = "jdbc:sqlite:src/DB/cerberus.sqlite";
             conn = DriverManager.getConnection(url);
             System.out.println("Connection to SQLite has been established");
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Connection failed");
         }
-       /* finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                System.out.println("Connection failed");
-            }
-
-        */
-
         return conn;
     }
 

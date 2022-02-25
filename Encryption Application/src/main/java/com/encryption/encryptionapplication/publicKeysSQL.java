@@ -1,9 +1,14 @@
 package com.encryption.encryptionapplication;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class publicKeysSQL {
     private int ID;
@@ -12,8 +17,8 @@ public class publicKeysSQL {
     private String name;
     private char sendReceive;
     private String keysValue;
-   private static ArrayList<String> emails = new ArrayList<>();
-   private static ArrayList<String> names = new ArrayList<>();
+   private static final ArrayList<String> emails = new ArrayList<>();
+   private static final ArrayList<String> names = new ArrayList<>();
 
     public static void main(String[] args) {
         //Connect();        return super.isClosed();
@@ -26,7 +31,7 @@ public class publicKeysSQL {
         Connection conn = null;
         try {
             // database params
-            String url = "jdbc:sqlite:/home/rohan/IdeaProjects/Encryption Application/Encryption Application/src/DB/cerberus.sqlite";
+            String url = "jdbc:sqlite:src/DB/cerberus.sqlite";
             conn = DriverManager.getConnection(url);
             System.out.println("Connection to SQLite has been established");
         } catch (SQLException e) {
@@ -88,9 +93,10 @@ public class publicKeysSQL {
         }
     }
 
-    public static void keyValue() throws SQLException {
+    public static void idArrayUpdater() {
         String sql = "SELECT * FROM PublicKeys";
-
+        emails.clear();
+        names.clear();
         try {
             Connection conn = Connect();
             Statement stm = conn.createStatement();
@@ -106,58 +112,44 @@ public class publicKeysSQL {
         }
     }
 
-    public int getID() {
-        return ID;
+   public static PublicKey getPublicKeyValue(StringBuilder email) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // connecting to the database and retriving data
+        String sql = "SELECT Keyvalue FROM PublicKeys WHERE email LIKE '" + email + "%';";
+       byte[] bytes = null;
+       // try and catch loop
+        try {
+            Connection conn = Connect();
+            Statement stm1 = conn.createStatement();
+            ResultSet rs = stm1.executeQuery(sql);
+            System.out.println(rs);
+            // saving result set
+            bytes = rs.getBytes("Keyvalue");
+            conn.close();
+        }
+        catch (SQLException e) {
+            System.out.println("SQL error");
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            System.out.println("General catch exception ran.");
+            e.printStackTrace();
+        }
+
+        // setting up key for use
+        X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+       return kf.generatePublic(ks);
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
 
-    public String getCreated() {
-        return created;
-    }
 
-    public void setCreated(String created) {
-        this.created = created;
-    }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public char getSendReceive() {
-        return sendReceive;
-    }
-
-    public void setSendReceive(char sendReceive) {
-        this.sendReceive = sendReceive;
-    }
-
-    public String getKeysValue() {
-        return keysValue;
-    }
-
-    public void setKeysValue(String keysValue) {
-        this.keysValue = keysValue;
-    }
-
+    // returning emails arraylist
     public static ArrayList<String> getEmails() {
         return (emails);
     }
 
+    // returning names arraylist
     public static ArrayList<String> getNames() {
         return (names);
     }

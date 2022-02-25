@@ -18,6 +18,7 @@ private static PrivateKey pvt;
         KeyPair kp = kpg.generateKeyPair();
         pub = kp.getPublic();
         pvt = kp.getPrivate();
+        /*
         try (FileOutputStream out = new FileOutputStream(fileName + ".key")) {
             out.write(kp.getPrivate().getEncoded());
         }
@@ -25,7 +26,10 @@ private static PrivateKey pvt;
         try (FileOutputStream out = new FileOutputStream(fileName + ".pub")) {
             out.write(kp.getPublic().getEncoded());
         }
+
+         */
     }
+
     public static void restorePublicKey(String pubKeyFile) throws InvalidKeySpecException, NoSuchAlgorithmException, IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(pubKeyFile));
         X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);

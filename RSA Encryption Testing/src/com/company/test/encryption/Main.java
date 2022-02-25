@@ -31,15 +31,15 @@ public class Main {
 
         // Generating AES Keys
 
-        //AESGen();
+        AESGen();
 
         // Generating and SAVING RSA Keys
 
-      //  RSAGen();
+        RSAGen();
 
         // Encrypting file
 
-      //  Encrypt();
+       Encrypt();
 
         //Decrypting file
 
