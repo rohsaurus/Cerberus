@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -83,7 +84,7 @@ public class SceneOneController {
         // request focus on the name field by default
         Platform.runLater(email::requestFocus);
 
-        // Converting name and email fields intoa pair
+        // Converting name and email fields into pair
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == dataCollection) {
                 return new Pair<>(email.getText(), name.getText());
@@ -109,9 +110,24 @@ public class SceneOneController {
                 emailValue.set(emailName.getKey());
             }
         });
-
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose where you want to save the public key");
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        String path = null;
+        if (selectedDirectory == null) {
+            //No Directory selected
+        } else{
+            path = selectedDirectory.getAbsolutePath();
+        }
         try {
             RSA.generateKeyPair(fileName.get());
+
+            // saving public key to database as well as where user wanted the file to be saved
+            if (path != null) {
+                RSA.savingPubToFile(path);
+
+            }
+
         } catch (NoSuchAlgorithmException | IOException e) {
             System.out.println("IO Exception or no such algorithm exception");
             e.printStackTrace();

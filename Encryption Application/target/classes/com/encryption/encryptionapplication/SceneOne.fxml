@@ -18,7 +18,7 @@
             <Font size="33.0" />
          </font>
       </Button>
-      <Button fx:id="DecryptButton" contentDisplay="CENTER" layoutX="14.0" layoutY="370.0" mnemonicParsing="false" prefHeight="181.0" prefWidth="204.0" text="Decrypt" AnchorPane.bottomAnchor="169.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="370.0">
+      <Button fx:id="DecryptButton" contentDisplay="CENTER" layoutX="14.0" layoutY="370.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="181.0" prefWidth="204.0" text="Decrypt" AnchorPane.bottomAnchor="169.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="370.0">
          <font>
             <Font size="33.0" />
          </font>

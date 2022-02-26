@@ -12,22 +12,25 @@ public class RSA {
 
 private static PublicKey pub;
 private static PrivateKey pvt;
+private static String fileNameUse;
     public static void generateKeyPair(String fileName) throws NoSuchAlgorithmException, IOException {
+       fileNameUse = fileName;
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(4096);
         KeyPair kp = kpg.generateKeyPair();
         pub = kp.getPublic();
         pvt = kp.getPrivate();
-        /*
-        try (FileOutputStream out = new FileOutputStream(fileName + ".key")) {
-            out.write(kp.getPrivate().getEncoded());
+    }
+    public static void savingPvtToFile(String path) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(path + ".key")) {
+            out.write(pub.getEncoded());
         }
+    }
 
-        try (FileOutputStream out = new FileOutputStream(fileName + ".pub")) {
-            out.write(kp.getPublic().getEncoded());
+    public static void savingPubToFile(String path) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(path + ".pub")) {
+            out.write(pvt.getEncoded());
         }
-
-         */
     }
 
     public static void restorePublicKey(String pubKeyFile) throws InvalidKeySpecException, NoSuchAlgorithmException, IOException {
