@@ -67,11 +67,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-      
-    - name: action-maven
-  # You may pin to the exact commit or the version.
-  # uses: comchangs/action-maven@54db702e085ac767dad94c87e84499afb9d77162
-      uses: comchangs/action-maven@v0.4-beta  
+
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
