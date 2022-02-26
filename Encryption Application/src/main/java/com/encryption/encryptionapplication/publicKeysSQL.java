@@ -113,7 +113,7 @@ public class publicKeysSQL {
     }
 
    public static PublicKey getPublicKeyValue(StringBuilder email) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        // connecting to the database and retriving data
+        // connecting to the database and retrieving data
         String sql = "SELECT Keyvalue FROM PublicKeys WHERE email LIKE '" + email + "%';";
        byte[] bytes = null;
        // try and catch loop

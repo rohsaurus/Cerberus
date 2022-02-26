@@ -28,6 +28,7 @@ import javafx.event.ActionEvent;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class SceneOneController {
     @FXML
@@ -194,6 +195,79 @@ public class SceneOneController {
         }
     }
 
+    public void decrypt() throws InvalidKeySpecException, NoSuchAlgorithmException, IOException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+        // updating arraylists wih current values from the database
+        privateKeysSQL.idArrayUpdater();
+        List<String> choices = new ArrayList<>();
+        List<String> emails = privateKeysSQL.getEmails();
+        List<String> names = privateKeysSQL.getNames();
+        for (int i = 0; i < emails.size() - 1; i++) {
+            choices.add(emails.get(i) + " - " + names.get(i));
+        }
+        // setting up dialog box
+        ChoiceDialog<String> dialog = new ChoiceDialog<>((emails.get(0) + " - " + names.get(0)), choices);
+        dialog.setTitle("Choose Which Key");
+        dialog.setHeaderText("Pick From the Choices Below");
+        dialog.setContentText("Choose Your Key");
+        Optional<String> result = dialog.showAndWait();
+        // getting the choice user made to send request to sql database to use that for decryption
+        String keyID = "";
+        if (result.isPresent()) {
+            keyID = result.get();
+        }
+
+        // formatting keyID into email
+        Matcher m = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+").matcher(keyID);
+        StringBuilder emailAddressStringBuilder = new StringBuilder();
+        while (m.find()) {
+            emailAddressStringBuilder.append(m.group());
+        }
+        // if the user did in fact choose something
+        if (!emailAddressStringBuilder.isEmpty()) {
+            // retrieving private key for decryption
+            PrivateKey pvt = privateKeysSQL.getPrivateKeyValue(emailAddressStringBuilder);
+
+            // prompting the user to choose a file for decryption
+            FileChooser fileChooser = new FileChooser();
+            File selectedFile = fileChooser.showOpenDialog(stage);
+
+
+
+            // loading the AES key from the file
+            FileInputStream in = new FileInputStream(selectedFile);
+            Cipher cipher = Cipher.getInstance(RSAalgorithm);
+            cipher.init(Cipher.DECRYPT_MODE,pvt);
+            byte[] x = new byte[512];
+            in.read(x);
+            byte[] keyb = cipher.doFinal(x);
+            SecretKeySpec skey = new SecretKeySpec(keyb, "AES");
+
+            // reading the IV from the file
+            byte[] iv = new byte[16];
+            in.read(iv);
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
+
+            // decrypting the file
+            Cipher decrypt = Cipher.getInstance(AESalgorithm);
+            decrypt.init(Cipher.DECRYPT_MODE, skey, ivspec);
+            // processing file
+            try (FileOutputStream out = new FileOutputStream(selectedFile +".ver")){
+                processFile(decrypt, in, out);
+            }
+            // renaming file to remove .cerb and .ver
+            String filePath = selectedFile.getAbsolutePath() + ".ver";
+            File oldName = new File(filePath);
+            String newFilePath = filePath.replace(".cerb.ver", "");
+            File newName = new File(newFilePath);
+            if(oldName.renameTo(newName)) {
+                System.out.println("Renamed the file successfully");
+            } else {
+                System.out.println("Error in renaming");
+            }
+            // deleting the old file
+            oldName.delete();
+        }
+    }
 
     // processing file to encrypt/decrypt
     private void processFile(Cipher ci, FileInputStream in, FileOutputStream output) throws  IllegalBlockSizeException, BadPaddingException, java.io.IOException{
