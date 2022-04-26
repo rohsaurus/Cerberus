@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:google_fonts/google_fonts.dart';
 import './pages/login_screen.dart';
+import "./pages/sign_up_screen.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

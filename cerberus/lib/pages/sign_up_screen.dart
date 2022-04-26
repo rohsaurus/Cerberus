@@ -1,19 +1,19 @@
 import "dart:io";
 import "dart:convert";
-import 'package:cerberus/pages/sign_up_screen.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "./login_screen.dart";
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   String _base64Hash = "";
@@ -162,7 +162,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20))),
                         onPressed: () {},
-                        child: Text("Login"))),
+                        child: Text("Sign Up"))),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()));
+                    },
+                    child: Text("Have an account? Sign in now!"))
               ],
             ),
           ],
@@ -238,33 +246,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           // otherwise show error to the user and prompt them to fill out all the fields
                           if (_emailController.text.isNotEmpty &&
                               _passwordController.text.isNotEmpty) {
-                                _loginData();
-                              }
-                              else {
-                                // show error and promptuser to fill out all the fields
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text("Please fill out all fields"),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("Close"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      );
-                                    });
-                              }
+                            _loginData();
+                          } else {
+                            // show error and promptuser to fill out all the fields
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text("Please fill out all fields"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
                         },
                         child: Text("Login"))),
-                        TextButton(onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SignUpScreen()));
-                        }, child: Text("Create an account")),
               ],
             ),
           ],
@@ -286,12 +289,5 @@ class _LoginScreenState extends State<LoginScreen> {
     var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
-    // verifying if hashes match up
-    _hashVerification(_passwordController.text, stringEncoded);
-  }
-
-  void _hashVerification(String password, String stringEncoded) async {
-    var verified = await argon2.verifyHashString(password, stringEncoded);
-    print("Was verified? $verified");
   }
 }
