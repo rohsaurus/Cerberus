@@ -1,5 +1,7 @@
 import "dart:io";
 import "dart:convert";
+import "dart:async";
+import 'package:path/path.dart' as p;
 import 'package:cerberus/pages/sign_up_screen.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import 'package:flutter/foundation.dart';
@@ -274,6 +276,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _loginData() async {
     //hashing password using argon2i
     DArgon2Flutter.init();
+
+
+    /*
     var s = Salt.newSalt();
     var result =
         await argon2.hashPasswordString(_passwordController.text, salt: s);
@@ -286,6 +291,14 @@ class _LoginScreenState extends State<LoginScreen> {
     var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
+    */
+    
+
+    // grabing stringEncoded from file
+    var file = File('file.txt');
+    var fileContents = await file.readAsLines();
+    var stringEncoded = fileContents[1];
+
     // verifying if hashes match up
     _hashVerification(_passwordController.text, stringEncoded);
   }

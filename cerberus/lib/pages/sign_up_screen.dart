@@ -12,6 +12,7 @@ class SignUpScreen extends StatefulWidget {
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
+// Need to add Data Validation to windows and linux and also the button to switch back to login screen on the credentials linux method
 
 class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _emailController = new TextEditingController();
@@ -68,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     Column(
                       children: [
-                        Text("Cerberus",
+                        Text("Cerberus (Sign Up Test)",
                             style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 36.0,
@@ -267,7 +268,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 });
                           }
                         },
-                        child: Text("Login"))),
+                        child: Text("Sign Up"))),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()));
+                    },
+                    child: Text("Have an account? Sign in now!"))
               ],
             ),
           ],
@@ -289,5 +298,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
+
+    // writing email and hashedString to a file in order to test verification
+    var file = File('file.txt');
+    var sink = file.openWrite();
+    sink.write("Email: ${_emailController.text}\n");
+    sink.write("$stringEncoded");
+    sink.close();
   }
 }
