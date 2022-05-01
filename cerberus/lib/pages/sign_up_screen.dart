@@ -1,6 +1,7 @@
 import "dart:io";
 import "dart:convert";
 import "package:dargon2_flutter/dargon2_flutter.dart";
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,8 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _confirmPasswordController =
+      new TextEditingController();
   String _base64Hash = "";
   String _hexHash = "";
   String _encodedString = "";
@@ -92,7 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           Expanded(
               // if platform is windows, use acrylic effect otherwise both methods are the same
-              child: Platform.isWindows
+              child: !kIsWeb && Platform.isWindows
                   ? credentialsWindows(context)
                   : credentialsLinux(context)),
         ]));
@@ -100,61 +103,89 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget credentialsWindows(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        color: Color.fromARGB(52, 117, 117, 117),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // email
-            TextField(
-                controller: _emailController,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.mail_rounded,
-                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
-                    hintText: "Email",
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    fillColor: Color.fromARGB(30, 255, 255, 255))),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            // password
-            TextField(
-                controller: _passwordController,
-                obscureText: true,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock_sharp,
-                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
-                    hintText: "Password",
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    fillColor: Color.fromARGB(30, 255, 255, 255))),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      color: Color.fromARGB(52, 117, 117, 117),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // email
+          TextField(
+              controller: _emailController,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.mail_rounded,
+                      size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                  hintText: "Email",
+                  hintStyle:
+                      TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  fillColor: Color.fromARGB(30, 255, 255, 255))),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          // password
+          TextField(
+              controller: _passwordController,
+              obscureText: true,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock_sharp,
+                      size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                  hintText: "Password",
+                  hintStyle:
+                      TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  fillColor: Color.fromARGB(30, 255, 255, 255))),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+          // Confirming password to make sure that the user is not typing in the wrong password
+          TextField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock_sharp,
+                      size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                  hintText: "Confirm Password",
+                  hintStyle:
+                      TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                  filled: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20)),
+                  fillColor: Color.fromARGB(30, 255, 255, 255))),
 
-            SizedBox(height: MediaQuery.of(context).size.height * 0.07),
-            Row(
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
               children: [
                 Expanded(
                     child: ElevatedButton(
@@ -162,20 +193,66 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             padding: EdgeInsets.all(16.0),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20))),
-                        onPressed: () {},
+                        onPressed: () {
+                          // check if email controller and password controller are filled out, and if so run the login function
+                          // otherwise show error to the user and prompt them to fill out all the fields
+                          if (_confirmPasswordController.text !=
+                              _passwordController.text) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text(
+                                        "Your passwords do not match. Please try again."),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          } else if ((_emailController.text.isNotEmpty &&
+                                  _passwordController.text.isNotEmpty) &&
+                              EmailValidator.validate(_emailController.text)) {
+                            _loginData();
+                          } else {
+                            // show error and promptuser to fill out all the fields
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text(
+                                        "Please fill out all fields and make sure your email is valid"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+                        },
                         child: Text("Sign Up"))),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
-                    },
-                    child: Text("Have an account? Sign in now!"))
               ],
             ),
-          ],
-        ));
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              },
+              child: Text("Have an account? Sign in now!"))
+        ],
+      ),
+    );
   }
 
   Widget credentialsLinux(BuildContext context) {
@@ -206,7 +283,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20)),
                     fillColor: Color.fromARGB(30, 255, 255, 255))),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             // password
             TextField(
                 controller: _passwordController,
@@ -232,53 +309,105 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderSide: BorderSide(color: Colors.transparent),
                         borderRadius: BorderRadius.circular(20)),
                     fillColor: Color.fromARGB(30, 255, 255, 255))),
-
-            SizedBox(height: MediaQuery.of(context).size.height * 0.07),
-            Row(
-              children: [
-                Expanded(
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.all(16.0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        onPressed: () {
-                          // check if email controller and password controller are filled out, and if so run the login function
-                          // otherwise show error to the user and prompt them to fill out all the fields
-                          if (_emailController.text.isNotEmpty &&
-                              _passwordController.text.isNotEmpty) {
-                            _loginData();
-                          } else {
-                            // show error and promptuser to fill out all the fields
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Error"),
-                                    content: Text("Please fill out all fields"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text("Close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        child: Text("Sign Up"))),
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
-                    },
-                    child: Text("Have an account? Sign in now!"))
-              ],
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+            // Confirming password to make sure that the user is not typing in the wrong password
+            TextField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.lock_sharp,
+                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                    hintText: "Confirm Password",
+                    hintStyle:
+                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(20)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(20)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(20)),
+                    fillColor: Color.fromARGB(30, 255, 255, 255))),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(16.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          onPressed: () {
+                            // check if email controller and password controller are filled out, and if so run the login function
+                            // otherwise show error to the user and prompt them to fill out all the fields
+                            if (_confirmPasswordController.text !=
+                                _passwordController.text) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Error"),
+                                      content: Text(
+                                          "Your passwords do not match. Please try again."),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Close"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            } else if ((_emailController.text.isNotEmpty &&
+                                    _passwordController.text.isNotEmpty) &&
+                                EmailValidator.validate(
+                                    _emailController.text)) {
+                              _loginData();
+                            } else {
+                              // show error and promptuser to fill out all the fields
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Error"),
+                                      content: Text(
+                                          "Please fill out all fields and make sure your email is valid"),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Close"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
+                          child: Text("Sign Up"))),
+                ],
+              ),
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.02,
+            ),
+
+            TextButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                },
+                child: Text("Have an account? Sign in now!"))
           ],
         ));
   }
@@ -302,7 +431,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // writing email and hashedString to a file in order to test verification
     var file = File('file.txt');
     var sink = file.openWrite();
-    sink.write("Email: ${_emailController.text}\n");
+    sink.write("${_emailController.text}\n");
     sink.write("$stringEncoded");
     sink.close();
   }

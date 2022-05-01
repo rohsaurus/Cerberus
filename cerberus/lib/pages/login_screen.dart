@@ -1,10 +1,9 @@
 import "dart:io";
 import "dart:convert";
 import "dart:async";
-import 'package:path/path.dart' as p;
 import 'package:cerberus/pages/sign_up_screen.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
-import 'package:flutter/foundation.dart';
+import "package:flutter/foundation.dart" show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -93,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Expanded(
               // if platform is windows, use acrylic effect otherwise both methods are the same
-              child: Platform.isWindows
+              child: !kIsWeb && Platform.isWindows
                   ? credentialsWindows(context)
                   : credentialsLinux(context)),
         ]));
@@ -240,33 +239,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           // otherwise show error to the user and prompt them to fill out all the fields
                           if (_emailController.text.isNotEmpty &&
                               _passwordController.text.isNotEmpty) {
-                                _loginData();
-                              }
-                              else {
-                                // show error and promptuser to fill out all the fields
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text("Please fill out all fields"),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("Close"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      );
-                                    });
-                              }
+                            _loginData();
+                          } else {
+                            // show error and promptuser to fill out all the fields
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text("Please fill out all fields"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
                         },
                         child: Text("Login"))),
-                        TextButton(onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SignUpScreen()));
-                        }, child: Text("Create an account")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SignUpScreen()));
+                    },
+                    child: Text("Create an account")),
               ],
             ),
           ],
@@ -276,7 +276,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _loginData() async {
     //hashing password using argon2i
     DArgon2Flutter.init();
-
 
     /*
     var s = Salt.newSalt();
@@ -292,7 +291,6 @@ class _LoginScreenState extends State<LoginScreen> {
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
     */
-    
 
     // grabing stringEncoded from file
     var file = File('file.txt');
@@ -300,11 +298,20 @@ class _LoginScreenState extends State<LoginScreen> {
     var stringEncoded = fileContents[1];
 
     // verifying if hashes match up
-    _hashVerification(_passwordController.text, stringEncoded);
+    var wasVerified =
+        _hashVerification(_passwordController.text, stringEncoded);
+
+    // checking if email is correct
+    if (_emailController.text == fileContents[0]) {
+      print("Email Matches");
+    } else {
+      print("Email does not match");
+    }
   }
 
-  void _hashVerification(String password, String stringEncoded) async {
+  Future<bool> _hashVerification(String password, String stringEncoded) async {
     var verified = await argon2.verifyHashString(password, stringEncoded);
     print("Was verified? $verified");
+    return verified;
   }
 }

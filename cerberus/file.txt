@@ -1,2 +1,2 @@
-Email: duckman@duck.com
-$argon2i$v=19$m=256,t=32,p=2$jRfH9+10eO9H3IuL21YkjQ$4Ue6MKrzlwg+HI+yyXkkNCsZAcprH5qN2JTGvTmrXoQ
+duckman@duck.com
+$argon2i$v=19$m=256,t=32,p=2$lrIYUZqzyh7P3+VhrowNqg$8Z8q03Tsxj8szCSCkQGQBiAB986G4ShlKArThHl9d8Y
