@@ -1,11 +1,15 @@
 import "dart:io";
 import "dart:convert";
 import "package:dargon2_flutter/dargon2_flutter.dart";
+import "package:auth0/auth0.dart";
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:flutter_mongo_stitch_platform_interface/flutter_mongo_stitch_platform_interface.dart';
 import "./login_screen.dart";
+import "../CloudflareWorkers/sign_up.dart";
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -427,12 +431,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
-
-    // writing email and hashedString to a file in order to test verification
-    var file = File('file.txt');
-    var sink = file.openWrite();
-    sink.write("${_emailController.text}\n");
-    sink.write("$stringEncoded");
-    sink.close();
+    var signUpObject = SignUp(_emailController.text, stringEncoded);
+    signUpObject.signup();
   }
 }
