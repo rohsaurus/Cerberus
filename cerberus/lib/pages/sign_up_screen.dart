@@ -376,7 +376,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     _passwordController.text.isNotEmpty) &&
                                 EmailValidator.validate(
                                     _emailController.text)) {
-                              _loginData();
+                              // if the email is not already used, then run the login function
+                              // otherwise show error to the user and prompt them to fill out all the fields
+
+                              if (_isEmailAlreadyInUse(_emailController.text,
+                                  _passwordController.text)) {
+                                _loginData();
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text(
+                                            "This email is already used. Please try a different email."),
+                                        actions: [
+                                          TextButton(
+                                            child: Text("Close"),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
+                              }
                             } else {
                               // show error and promptuser to fill out all the fields
                               showDialog(
@@ -423,15 +447,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var result =
         await argon2.hashPasswordString(_passwordController.text, salt: s);
     //Raw hash values available as int list, base 64 string, and hex string
-    var bytesRaw = result.rawBytes;
-    var base64Hash = result.base64String;
-    var hexHash = result.hexString;
+    //  var bytesRaw = result.rawBytes;
+    // var base64Hash = result.base64String;
+    //var hexHash = result.hexString;
 
     //Encoded hash values available as int list and encoded string
-    var bytesEncoded = result.encodedBytes;
+    // var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
     signUpObject.signup();
+  }
+
+  bool _isEmailAlreadyInUse(String email, String password) {
+    var user = SignUp(email, password);
+    bool value = false;
+    user.checkUser().then((String result) {
+      if (result == "null") {
+        value = true;
+      } else {
+        value = false;
+      }
+    });
+    return value;
   }
 }
