@@ -6,6 +6,7 @@ import "package:dargon2_flutter/dargon2_flutter.dart";
 import "package:flutter/foundation.dart" show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "home_screen.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -229,46 +230,63 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               children: [
                 Expanded(
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.all(16.0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20))),
-                        onPressed: () {
-                          // check if email controller and password controller are filled out, and if so run the login function
-                          // otherwise show error to the user and prompt them to fill out all the fields
-                          if (_emailController.text.isNotEmpty &&
-                              _passwordController.text.isNotEmpty) {
-                            _loginData();
-                          } else {
-                            // show error and promptuser to fill out all the fields
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("Error"),
-                                    content: Text("Please fill out all fields"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text("Close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        child: Text("Login"))),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SignUpScreen()));
-                    },
-                    child: Text("Create an account")),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(16.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      onPressed: () {
+                        // check if email controller and password controller are filled out, and if so run the login function
+                        // otherwise show error to the user and prompt them to fill out all the fields
+                        if (_emailController.text.isNotEmpty &&
+                            _passwordController.text.isNotEmpty) {
+                          //_loginData();
+                          // navigate to the home page
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()));
+                        } else {
+                          // show error and promptuser to fill out all the fields
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text("Please fill out all fields"),
+                                  actions: [
+                                    TextButton(
+                                      child: Text("Close"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      child: Text("Login")),
+                ),
               ],
             ),
+            Row(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.115),
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(16.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SignUpScreen()));
+                      },
+                      child: Text("Create an account")),
+                ),
+              ],
+            )
           ],
         ));
   }
