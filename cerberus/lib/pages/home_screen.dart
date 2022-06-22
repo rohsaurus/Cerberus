@@ -15,83 +15,73 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Color.fromARGB(232, 3, 25, 42),
       // three buttons in the middle that say encrypt, decrypt, and settings
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: SizedBox(
-                  height: 200,
-                  width: 300,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.black26,
-                      onPrimary: Colors.white,
-                      side: BorderSide(
-                        width: 2,
-                      ), //border width and color
-                      elevation: 10, //elevation of button
-                      shape: RoundedRectangleBorder(
-                          //to set border radius to button
-                          borderRadius: BorderRadius.circular(100)),
-                      padding: EdgeInsets.all(20),
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: InkWell(
+                    child: Icon(
+                      Icons.settings_applications,
+                      size: MediaQuery.of(context).size.height * .08,
+                      color: Color.fromARGB(103, 255, 255, 255),
                     ),
-                    child: Text(
-                      "Encrypt",
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width / 20,
-                          fontFamily: "Poppins",
-                          color: Color.fromARGB(255, 3, 25, 42)),
-                    ),
-                    onPressed: () {},
+                    onTap: () {},
                   ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: RaisedButton(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  child: Text(
-                    "Decrypt",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: "Poppins",
-                        color: Color.fromARGB(255, 3, 25, 42)),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width*.02,
-              )
-            ],
-          ),
+                )
+              ]),
           SizedBox(
-            height: MediaQuery.of(context).size.height*.1,
+            height: MediaQuery.of(context).size.height * .28,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
-                child: RaisedButton(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  child: Text(
-                    "Settings",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: "Poppins",
-                        color: Color.fromARGB(255, 3, 25, 42)),
-                  ),
-                  onPressed: () {},
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  button(context, "Encrypt"),
+                  button(context, "Decrypt"),
+                ],
               ),
             ],
           ),
         ],
       ),
     ));
+  }
+
+// make a widget that contains a button with text that is taken in as a parameter
+  Widget button(BuildContext context, String text) {
+    return Container(
+      margin: EdgeInsets.only(left: 20, right: 20),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * .22,
+        width: MediaQuery.of(context).size.width * .25,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color.fromARGB(14, 0, 0, 0),
+            onPrimary: Colors.white,
+            side: BorderSide(
+              width: 2,
+            ), //border width and color
+            elevation: 10, //elevation of button
+            shape: RoundedRectangleBorder(
+                //to set border radius to button
+                borderRadius: BorderRadius.circular(100)),
+            padding: EdgeInsets.all(20),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 20,
+                fontFamily: "Poppins",
+                color: Color.fromARGB(94, 253, 253, 253)),
+          ),
+          onPressed: () {},
+        ),
+      ),
+    );
   }
 }

@@ -1,14 +1,11 @@
 import "dart:io";
-import "dart:convert";
 import "package:dargon2_flutter/dargon2_flutter.dart";
-import "package:auth0/auth0.dart";
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'package:flutter_mongo_stitch_platform_interface/flutter_mongo_stitch_platform_interface.dart';
 import "./login_screen.dart";
+import "./home_screen.dart";
 import "../CloudflareWorkers/sign_up.dart";
 
 class SignUpScreen extends StatefulWidget {
@@ -28,7 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _hexHash = "";
   String _encodedString = "";
   late DArgon2Result result;
-
+  late int _statusCode;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -263,181 +260,180 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Color.fromARGB(46, 17, 136, 233),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // email
-            TextField(
-                controller: _emailController,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.mail_rounded,
-                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
-                    hintText: "Email",
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    fillColor: Color.fromARGB(30, 255, 255, 255))),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            // password
-            TextField(
-                controller: _passwordController,
-                obscureText: true,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock_sharp,
-                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
-                    hintText: "Password",
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    fillColor: Color.fromARGB(30, 255, 255, 255))),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            // Confirming password to make sure that the user is not typing in the wrong password
-            TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock_sharp,
-                        size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
-                    hintText: "Confirm Password",
-                    hintStyle:
-                        TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                        borderRadius: BorderRadius.circular(20)),
-                    fillColor: Color.fromARGB(30, 255, 255, 255))),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.all(16.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20))),
-                          onPressed: () {
-                            // check if email controller and password controller are filled out, and if so run the login function
-                            // otherwise show error to the user and prompt them to fill out all the fields
-                            if (_confirmPasswordController.text !=
-                                _passwordController.text) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text("Error"),
-                                      content: Text(
-                                          "Your passwords do not match. Please try again."),
-                                      actions: [
-                                        TextButton(
-                                          child: Text("Close"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  });
-                            } else if ((_emailController.text.isNotEmpty &&
-                                    _passwordController.text.isNotEmpty) &&
-                                EmailValidator.validate(
-                                    _emailController.text)) {
-                              // if the email is not already used, then run the login function
-                              // otherwise show error to the user and prompt them to fill out all the fields
+        child: authentication(context));
+  }
 
-                              if (_isEmailAlreadyInUse(_emailController.text,
-                                  _passwordController.text)) {
-                                _loginData();
-                              } else {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text(
-                                            "This email is already used. Please try a different email."),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("Close"),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      );
-                                    });
-                              }
-                            } else {
-                              // show error and promptuser to fill out all the fields
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Error"),
-                                      content: Text(
-                                          "Please fill out all fields and make sure your email is valid"),
-                                      actions: [
-                                        TextButton(
-                                          child: Text("Close"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  });
-                            }
-                          },
-                          child: Text("Sign Up"))),
-                ],
-              ),
+  Widget authentication(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // email
+        TextField(
+            controller: _emailController,
+            style: TextStyle(
+              color: Colors.white,
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.mail_rounded,
+                    size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                hintText: "Email",
+                hintStyle: TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                enabledBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                focusedBorder:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                fillColor: Color.fromARGB(30, 255, 255, 255))),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+        // password
+        TextField(
+            controller: _passwordController,
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.white,
             ),
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.lock_sharp,
+                    size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                hintText: "Password",
+                hintStyle: TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                fillColor: Color.fromARGB(30, 255, 255, 255))),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+        // Confirming password to make sure that the user is not typing in the wrong password
+        TextField(
+            controller: _confirmPasswordController,
+            obscureText: true,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+                prefixIcon: Icon(Icons.lock_sharp,
+                    size: 15.0, color: Color.fromARGB(190, 255, 255, 255)),
+                hintText: "Confirm Password",
+                hintStyle: TextStyle(color: Color.fromARGB(141, 255, 255, 255)),
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                    borderRadius: BorderRadius.circular(20)),
+                fillColor: Color.fromARGB(30, 255, 255, 255))),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(16.0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      onPressed: () async {
+                        // check if email controller and password controller are filled out, and if so run the login function
+                        // otherwise show error to the user and prompt them to fill out all the fields
+                        if (_confirmPasswordController.text !=
+                            _passwordController.text) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text(
+                                      "Your passwords do not match. Please try again."),
+                                  actions: [
+                                    TextButton(
+                                      child: Text("Close"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        } else if ((_emailController.text.isNotEmpty &&
+                                _passwordController.text.isNotEmpty) &&
+                            EmailValidator.validate(_emailController.text)) {
+                          // if the email is not already used, then run the login function
+                          // otherwise show error to the user and prompt them to fill out all the fields
+                          bool emailInUse = await _isEmailAlreadyInUse(_emailController.text, _passwordController.text);
+                          if (!emailInUse) {
+                            _loginData();
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text(
+                                        "This email is already used. Please login."),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+                        } else {
+                          // show error and promptuser to fill out all the fields
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Error"),
+                                  content: Text(
+                                      "Please fill out all fields and make sure your email is valid"),
+                                  actions: [
+                                    TextButton(
+                                      child: Text("Close"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      child: Text("Sign Up"))),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.02,
+        ),
 
-            TextButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
-                },
-                child: Text("Have an account? Sign in now!"))
-          ],
-        ));
+        TextButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
+            },
+            child: Text("Have an account? Sign in now!"))
+      ],
+    );
   }
 
   void _loginData() async {
@@ -457,18 +453,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
     print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
     signUpObject.signup();
+    _statusCode = signUpObject.statusCode;
+    if (_statusCode == 200) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Something went wrong. Please try again."),
+              actions: [
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
   }
 
-  bool _isEmailAlreadyInUse(String email, String password) {
+  Future<bool> _isEmailAlreadyInUse(String email, String password) async {
     var user = SignUp(email, password);
-    bool value = false;
-    user.checkUser().then((String result) {
-      if (result == "null") {
-        value = true;
-      } else {
-        value = false;
-      }
-    });
-    return value;
-  }
+   return await user.checkUser();
+}
 }
