@@ -453,7 +453,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
     signUpObject.signup();
-    _statusCode = signUpObject.statusCode;
+    _statusCode = await signUpObject.statusCode;
     if (_statusCode == 200) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomeScreen()));

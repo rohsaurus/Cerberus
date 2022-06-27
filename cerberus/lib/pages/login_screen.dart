@@ -1,6 +1,7 @@
 import "dart:io";
 import "dart:convert";
 import "dart:async";
+import 'package:cerberus/CloudflareWorkers/sign_up.dart';
 import 'package:cerberus/pages/sign_up_screen.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import "package:flutter/foundation.dart" show kIsWeb;
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  Widget credentialsLinux(BuildContext context) {
+  Widget credentialsLinux(BuildContext context)  {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Color.fromARGB(46, 17, 136, 233),
@@ -235,17 +236,35 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: EdgeInsets.all(16.0),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
-                      onPressed: () {
+                      onPressed: () async {
                         // check if email controller and password controller are filled out, and if so run the login function
                         // otherwise show error to the user and prompt them to fill out all the fields
                         if (_emailController.text.isNotEmpty &&
                             _passwordController.text.isNotEmpty) {
-                          //_loginData();
-                          // navigate to the home page
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
+                              bool _loginGood = await _loginData();
+                          if (_loginGood) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text("Invalid email or password"),
+                                    actions: [
+                                      FlatButton(
+                                        child: Text("OK"),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
                         } else {
                           // show error and promptuser to fill out all the fields
                           showDialog(
@@ -291,44 +310,30 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  void _loginData() async {
+  Future<bool> _loginData() async {
     //hashing password using argon2i
     DArgon2Flutter.init();
 
-    /*
-    var s = Salt.newSalt();
-    var result =
-        await argon2.hashPasswordString(_passwordController.text, salt: s);
-    //Raw hash values available as int list, base 64 string, and hex string
-    var bytesRaw = result.rawBytes;
-    var base64Hash = result.base64String;
-    var hexHash = result.hexString;
-
-    //Encoded hash values available as int list and encoded string
-    var bytesEncoded = result.encodedBytes;
-    var stringEncoded = result.encodedString;
-    print("String Encoded: $stringEncoded");
-    */
-
-    // grabing stringEncoded from file
-    var file = File('file.txt');
-    var fileContents = await file.readAsLines();
-    var stringEncoded = fileContents[1];
-
+    // need to get password from the database
+    var loginObj = SignUp(_emailController.text, _passwordController.text);
+    var JSONResponse = await loginObj.getUser();
+    // need to grab password hash from the map
+    var passwordHash = JSONResponse["password"];
     // verifying if hashes match up
-    var wasVerified =
-        _hashVerification(_passwordController.text, stringEncoded);
+    var wasVerified = _hashVerification(_passwordController.text, passwordHash);
 
-    // checking if email is correct
-    if (_emailController.text == fileContents[0]) {
-      print("Email Matches");
-    } else {
-      print("Email does not match");
-    }
+    return await wasVerified;
   }
 
   Future<bool> _hashVerification(String password, String stringEncoded) async {
-    var verified = await argon2.verifyHashString(password, stringEncoded);
+    bool verified = false;
+    try {
+      verified = await argon2.verifyHashString(password, stringEncoded);
+      }
+      on DArgon2Exception catch (e) {
+        print(e.toString());
+        verified = false;
+      };
     print("Was verified? $verified");
     return verified;
   }
