@@ -44,6 +44,8 @@ dependencies:
   flutter_mongo_stitch_platform_interface: ^2.0.0-nullsafety.2
   auth0: ^2.2.0-beta1
   http: ^0.13.4
+  crypton: ^2.0.5
+  steel_crypt: ^3.0.0+1
 
 dev_dependencies:
   flutter_test:
