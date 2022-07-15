@@ -445,13 +445,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var s = Salt.newSalt();
     var result =
         await argon2.hashPasswordString(_passwordController.text, salt: s);
-    //Raw hash values available as int list, base 64 string, and hex string
-    //  var bytesRaw = result.rawBytes;
-    // var base64Hash = result.base64String;
-    //var hexHash = result.hexString;
-
-    //Encoded hash values available as int list and encoded string
-    // var bytesEncoded = result.encodedBytes;
     var stringEncoded = result.encodedString;
     print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
