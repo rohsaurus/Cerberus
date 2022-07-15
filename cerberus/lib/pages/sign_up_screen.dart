@@ -1,4 +1,6 @@
 import "dart:io";
+import 'package:fast_rsa/fast_rsa.dart';
+import 'package:aes256gcm/aes256gcm.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
@@ -375,7 +377,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             EmailValidator.validate(_emailController.text)) {
                           // if the email is not already used, then run the login function
                           // otherwise show error to the user and prompt them to fill out all the fields
-                          bool emailInUse = await _isEmailAlreadyInUse(_emailController.text, _passwordController.text);
+                          bool emailInUse = await _isEmailAlreadyInUse(
+                              _emailController.text, _passwordController.text);
                           if (!emailInUse) {
                             _loginData();
                           } else {
@@ -453,8 +456,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
     signUpObject.signup();
-    _statusCode = await signUpObject.statusCode;
+    _statusCode = signUpObject.statusCode;
     if (_statusCode == 200) {
+      // run a function that will generate the user's keypairs and save them to the database
+      // then navigate to the home screen
+      _generateKeyPairs(_passwordController.text);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {
@@ -479,6 +485,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<bool> _isEmailAlreadyInUse(String email, String password) async {
     var user = SignUp(email, password);
-   return await user.checkUser();
+    return await user.checkUser();
+  }
 }
+
+void _generateKeyPairs(_password) async{
+ var result = await RSA.generate(4096);
+  String privKey = result.privateKey;
+  String pubKey = result.publicKey;
+  var encrypted = await Aes256Gcm.encrypt(privKey, _password);
 }

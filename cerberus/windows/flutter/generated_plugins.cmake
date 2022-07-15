@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   dargon2_flutter_desktop
+  fast_rsa
   flutter_acrylic
 )
 

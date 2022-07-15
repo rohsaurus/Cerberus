@@ -46,6 +46,8 @@ dependencies:
   http: ^0.13.4
   crypton: ^2.0.5
   steel_crypt: ^3.0.0+1
+  fast_rsa: ^3.4.7
+  aes256gcm: ^1.0.1
 
 dev_dependencies:
   flutter_test:
