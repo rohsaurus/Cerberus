@@ -57,11 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * .22,
-        width: MediaQuery.of(context).size.width * .25,
+        height: MediaQuery.of(context).size.height * .2,
+        width: MediaQuery.of(context).size.width * .29,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(14, 0, 0, 0),
+            primary: Color.fromARGB(144, 7, 205, 255),
             onPrimary: Colors.white,
             side: BorderSide(
               width: 2,
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width / 20,
                 fontFamily: "Poppins",
-                color: Color.fromARGB(94, 253, 253, 253)),
+                color: Color.fromARGB(190, 253, 253, 253)),
           ),
           onPressed: () {},
         ),
