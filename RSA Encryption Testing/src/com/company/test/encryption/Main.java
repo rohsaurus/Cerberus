@@ -35,7 +35,7 @@ public class Main {
 
         // Generating and SAVING RSA Keys
 
-        RSAGen();
+       // RSAGen();
 
         // Encrypting file
 
@@ -43,7 +43,7 @@ public class Main {
 
         //Decrypting file
 
-       Decrypt();
+//       Decrypt();
 
 
     }

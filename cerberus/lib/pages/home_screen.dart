@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import "../button functions/home_screen_buttons.dart";
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+  String _email = "";
+  String _password = "";
+  HomeScreen({Key? key, required email, required password}) : super(key: key) {
+    // TODO: implement
+    _email = email;
+    _password = password;
+  }
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+// init state to send the email and password to the button functions
+  @override
+  void initState() {
+    Button.setEmailAndPassword(widget._email, widget._password);
+    super.initState();
+  }
+
+  var encryption = Button("Encryption", 0);
+  var decryption = Button("Decryption", 1);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  button(context, "Encrypt"),
-                  button(context, "Decrypt"),
+                  encryption,
+                  decryption,
                 ],
               ),
             ],
@@ -50,38 +65,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     ));
-  }
-
-// make a widget that contains a button with text that is taken in as a parameter
-  Widget button(BuildContext context, String text) {
-    return Container(
-      margin: EdgeInsets.only(left: 20, right: 20),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * .2,
-        width: MediaQuery.of(context).size.width * .29,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(144, 7, 205, 255),
-            onPrimary: Colors.white,
-            side: BorderSide(
-              width: 2,
-            ), //border width and color
-            elevation: 10, //elevation of button
-            shape: RoundedRectangleBorder(
-                //to set border radius to button
-                borderRadius: BorderRadius.circular(100)),
-            padding: EdgeInsets.all(20),
-          ),
-          child: Text(
-            text,
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width / 20,
-                fontFamily: "Poppins",
-                color: Color.fromARGB(190, 253, 253, 253)),
-          ),
-          onPressed: () {},
-        ),
-      ),
-    );
   }
 }

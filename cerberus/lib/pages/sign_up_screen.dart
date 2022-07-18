@@ -1,4 +1,5 @@
 import "dart:io";
+import 'package:cerberus/CloudflareWorkers/keys.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:aes256gcm/aes256gcm.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
@@ -98,9 +99,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           Expanded(
               // if platform is windows, use acrylic effect otherwise both methods are the same
-              child: !kIsWeb && Platform.isWindows
-                  ? credentialsWindows(context)
-                  : credentialsLinux(context)),
+              //child: !kIsWeb && Platform.isWindows
+                //  ? credentialsWindows(context)
+                  //: credentialsLinux(context)),
+                  child: credentialsLinux(context))
         ]));
   }
 
@@ -453,9 +455,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_statusCode == 200) {
       // run a function that will generate the user's keypairs and save them to the database
       // then navigate to the home screen
-      _generateKeyPairs(_passwordController.text);
+      _generateKeyPairs(_passwordController.text, _emailController.text);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => HomeScreen(email: _emailController.text,password: _passwordController.text,)));
     } else {
       showDialog(
           context: context,
@@ -482,9 +484,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-void _generateKeyPairs(_password) async{
- var result = await RSA.generate(4096);
-  String privKey = result.privateKey;
-  String pubKey = result.publicKey;
-  var encrypted = await Aes256Gcm.encrypt(privKey, _password);
+void _generateKeyPairs(_password, _email) async{
+  var _result = await RSA.generate(4096);
+  String _privKey = _result.privateKey;
+  String _pubKey = _result.publicKey;
+  var _encrypted = await Aes256Gcm.encrypt(_privKey, _password);
+  // posting the Keys to the database
+  var _postKeys = Keys(_email,_pubKey, _encrypted);
+  _postKeys.postKeys();
 }

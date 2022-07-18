@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_acrylic: ^1.0.0+2
   font_awesome_flutter: ^10.1.0
-  google_fonts: ^2.3.1
+  google_fonts: ^3.0.1
   dargon2_flutter: ^3.1.0
   path: ^1.8.0
   email_validator: ^2.0.1
@@ -48,6 +48,11 @@ dependencies:
   steel_crypt: ^3.0.0+1
   fast_rsa: ^3.4.7
   aes256gcm: ^1.0.1
+  file_picker: ^4.6.1
+  encrypt: 
+    git:
+      url: https://github.com/leocavalcante/encrypt.git
+      ref: 5.x
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +63,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

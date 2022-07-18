@@ -94,9 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Expanded(
               // if platform is windows, use acrylic effect otherwise both methods are the same
+              /*
               child: !kIsWeb && Platform.isWindows
                   ? credentialsWindows(context)
-                  : credentialsLinux(context)),
+                  : credentialsLinux(context)
+                  */
+              child: credentialsLinux(context)),
         ]));
   }
 
@@ -172,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  Widget credentialsLinux(BuildContext context)  {
+  Widget credentialsLinux(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Color.fromARGB(46, 17, 136, 233),
@@ -241,12 +244,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         // otherwise show error to the user and prompt them to fill out all the fields
                         if (_emailController.text.isNotEmpty &&
                             _passwordController.text.isNotEmpty) {
-                              bool _loginGood = await _loginData();
+                          bool _loginGood = await _loginData();
                           if (_loginGood) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
+                                    builder: (context) => HomeScreen(
+                                        email: _emailController.text,
+                                        password: _passwordController.text)));
                           } else {
                             showDialog(
                                 context: context,
@@ -329,11 +334,10 @@ class _LoginScreenState extends State<LoginScreen> {
     bool verified = false;
     try {
       verified = await argon2.verifyHashString(password, stringEncoded);
-      }
-      on DArgon2Exception catch (e) {
-        print(e.toString());
-        verified = false;
-      };
+    } on DArgon2Exception catch (e) {
+      print(e.toString());
+      verified = false;
+    }
     print("Was verified? $verified");
     return verified;
   }

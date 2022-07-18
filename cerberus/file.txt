@@ -1,2 +1,0 @@
-duckman@duck.com
-$argon2i$v=19$m=256,t=32,p=2$lrIYUZqzyh7P3+VhrowNqg$8Z8q03Tsxj8szCSCkQGQBiAB986G4ShlKArThHl9d8Y
