@@ -260,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     title: Text("Error"),
                                     content: Text("Invalid email or password"),
                                     actions: [
-                                      FlatButton(
+                                      TextButton(
                                         child: Text("OK"),
                                         onPressed: () {
                                           Navigator.pop(context);

@@ -85,13 +85,13 @@ class _ButtonState extends State<Button> {
                           ),
                         ),
                         actions: [
-                          FlatButton(
+                          TextButton(
                             child: Text("Cancel"),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
-                          FlatButton(
+                          TextButton(
                             child: Text("Encrypt"),
                             onPressed: () async {
                               // Lets the user pick one file; files with any file extension can be selected
@@ -153,13 +153,13 @@ class _ButtonState extends State<Button> {
                       return AlertDialog(
                         title: Text("Select File to Decrypt"),
                         actions: [
-                          FlatButton(
+                          TextButton(
                             child: Text("Cancel"),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
-                          FlatButton(
+                          TextButton(
                               child: Text("Decrypt"),
                               onPressed: () async {
                                 // Lets the user pick one file; files with any file extension can be selected
