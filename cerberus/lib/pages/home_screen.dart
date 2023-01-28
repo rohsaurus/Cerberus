@@ -21,8 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  var encryption = Button("Encryption", 0);
-  var decryption = Button("Decryption", 1);
+  var encryption = Button("Encrypt", 0);
+  var decryption = Button("Decrypt", 1);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

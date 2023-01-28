@@ -1,3 +1,4 @@
+import 'dart:convert' show utf8;
 import "dart:io";
 import 'dart:typed_data';
 import 'package:aes256gcm/aes256gcm.dart';
@@ -81,7 +82,7 @@ class _ButtonState extends State<Button> {
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText:
-                                "Enter the email of the person you want to send the file to",
+                                "Enter the email of the person you want to encrypt the file for",
                           ),
                         ),
                         actions: [
@@ -110,6 +111,9 @@ class _ButtonState extends State<Button> {
                                 final AESiv = encrypt.IV.fromSecureRandom(16);
                                 final encryptor = encrypt.Encrypter(encrypt
                                     .AES(AESkey, mode: encrypt.AESMode.gcm));
+                                // @bug: some weird thing when I tested using a 6.5mb pdf file. When I did the encryption on the imgbytes1, the bytes balloned to 35mb...
+                                // @bug: I need to fix the variable names on both encryption and decryption. For example, somehow encryptedAESKEy and encryptedFileContents are the same? It's interesting.... Need to spend time to figure out and change variable names! But I think using binary is good and will allow me to encrypt and decrypt virtually any file type
+
                                 final encrypted = encryptor
                                     .encryptBytes(imgbytes1, iv: AESiv);
                                 // get the directory of file
@@ -117,16 +121,16 @@ class _ButtonState extends State<Button> {
                                     p.dirname(file.path),
                                     p.basename(file.path) + ".cerb"));
                                 // encrypt AESkey with pubkey
-                                final encryptedAESKey = await RSA.encryptOAEP(
-                                    AESkey.base64, "Key", Hash.SHA512, pubKey);
-                                final encryptedAESIV = await RSA.encryptOAEP(
-                                    AESiv.base64, "IV", Hash.SHA512, pubKey);
+                                final encryptedAESKey =
+                                    await RSA.encryptOAEPBytes(AESkey.bytes,
+                                        "Key", Hash.SHA512, pubKey);
+                                final encryptedAESIV =
+                                    await RSA.encryptOAEPBytes(
+                                        AESiv.bytes, "IV", Hash.SHA512, pubKey);
                                 // write encryptedAESKey and encryptedAESIV to outputFile
-                                outputFile.writeAsStringSync(
-                                  "$encryptedAESKey\n",
-                                );
-                                outputFile.writeAsStringSync(
-                                  "$encryptedAESIV\n",
+                                outputFile.writeAsBytesSync(encryptedAESKey);
+                                outputFile.writeAsBytesSync(
+                                  encryptedAESIV,
                                   mode: FileMode.append,
                                 );
                                 // write encrypted to outputFile
@@ -135,8 +139,8 @@ class _ButtonState extends State<Button> {
                                 // show a snackbar that says the file was encrypted
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
-                                  content:
-                                      const Text("Encryption was Succesful!"),
+                                  content: Text(
+                                      "Encryption was Succesful!\nFile located at: ${file.path}"),
                                 ));
                               }
                               Navigator.pop(context);
@@ -180,42 +184,41 @@ class _ButtonState extends State<Button> {
                                   var outputFile = File(p.join(
                                       p.dirname(file.path),
                                       p.basenameWithoutExtension(file.path)));
-                                  // read the encryptedAESKey and encryptedAESIV from file
-                                  final List<String> fileContents =
-                                      file.readAsLinesSync();
-                                  final encryptedAESKey =
-                                      fileContents.elementAt(0);
-                                  final encryptedAESIV =
-                                      fileContents.elementAt(1);
-                                  final encryptedContents =
-                                      fileContents.elementAt(2);
-
+                                  // read lines one and two of the file - one is the encrypted AES key and the other is the encrypted AES IV
+                                  final fileContents = file.readAsBytesSync();
+                                  final encryptedKeyAndIVSize =
+                                      512; // SHA512 made it 512 bytes
+                                  final encryptedAESKey = fileContents.sublist(
+                                      0, encryptedKeyAndIVSize);
+                                  final encryptedAESIV = fileContents.sublist(
+                                      encryptedKeyAndIVSize,
+                                      encryptedKeyAndIVSize * 2);
+                                  final encryptedContents = fileContents
+                                      .sublist(encryptedKeyAndIVSize * 2);
                                   // decrypt encryptedAESKey and encryptedAESIV with privkey
-                                  final decryptedAESKey = await RSA.decryptOAEP(
-                                      encryptedAESKey,
-                                      "Key",
-                                      Hash.SHA512,
-                                      privKey);
-                                  final decryptedAESIV = await RSA.decryptOAEP(
-                                      encryptedAESIV,
-                                      "IV",
-                                      Hash.SHA512,
-                                      privKey);
-
-                                  final key =
-                                      encrypt.Key.fromBase64(decryptedAESKey);
-                                  final iv =
-                                      encrypt.IV.fromBase64(decryptedAESIV);
+                                  final decryptedAESKeyBytes =
+                                      await RSA.decryptOAEPBytes(
+                                          encryptedAESKey,
+                                          "Key",
+                                          Hash.SHA512,
+                                          privKey);
+                                  final decryptedAESIVBytes =
+                                      await RSA.decryptOAEPBytes(encryptedAESIV,
+                                          "IV", Hash.SHA512, privKey);
+                                  final key = encrypt.Key(decryptedAESKeyBytes);
+                                  final iv = encrypt.IV(decryptedAESIVBytes);
                                   final decryptor = encrypt.Encrypter(encrypt
                                       .AES(key, mode: encrypt.AESMode.gcm));
-                                  final decrypted = decryptor
-                                      .decrypt64(encryptedContents, iv: iv);
+                                  // decrypt the file contents
+                                  final decrypted = decryptor.decrypt(
+                                      encrypt.Encrypted(encryptedContents),
+                                      iv: iv);
                                   // write decrypted to outputFile
                                   outputFile.writeAsStringSync(decrypted);
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
-                                    content:
-                                        const Text("Decryption was Succesful!"),
+                                    content: Text(
+                                        "Decryption was Succesful!\n File located at: ${file.path}"),
                                   ));
                                 }
                                 Navigator.pop(context);
