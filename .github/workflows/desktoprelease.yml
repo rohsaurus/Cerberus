@@ -35,15 +35,15 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: cerberus-${{GITHUB_OUTPUT}}-linux.zip
+          filename: cerberus-$GITHUB_OUTPUT-linux.zip
           directory: cerberus/build/linux/x64/release/bundle
       - name: Release to github
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{GITHUB_OUTPUT}}
-          files: cerberus/build/linux/x64/release/bundle/cerberus-${{GITHUB_OUTPUT}}-linux.zip
+          tag_name: $GITHUB_OUTPUT
+          files: cerberus/build/linux/x64/release/bundle/cerberus-$GITHUB_OUTPUT-linux.zip
 
   windows:
     runs-on: windows-latest
