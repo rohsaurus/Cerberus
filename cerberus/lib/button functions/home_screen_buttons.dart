@@ -1,6 +1,7 @@
 import "dart:io";
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import "package:path/path.dart";
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'decryptFiles.dart';
 import 'encryptFiles.dart';
@@ -99,9 +100,8 @@ class _ButtonState extends State<Button> {
                                     .pickFiles(type: FileType.any);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
-                                  Future <File> file = encryptFile(
+                                  File file = await encryptFile(
                                       result, _emailController.text);
-                                  
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                     content: Text(

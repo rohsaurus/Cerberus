@@ -40,31 +40,4 @@ Future<File> encryptFile(FilePickerResult result, String email) async {
   // append cipherText to the file
   await outputFile.writeAsBytes(encrypted.cipherText, mode: FileMode.append);
   return outputFile;
-  /*
-    final AESkey = encrypt.Key.fromSecureRandom(32);
-    final AESiv = encrypt.IV.fromSecureRandom(16);
-    final encryptor =
-        encrypt.Encrypter(encrypt.AES(AESkey, mode: encrypt.AESMode.gcm));
-    // @bug: some weird thing when I tested using a 6.5mb pdf file. When I did the encryption on the imgbytes1, the bytes balloned to 35mb...
-    // @bug: I need to fix the variable names on both encryption and decryption. For example, somehow encryptedAESKEy and encryptedFileContents are the same? It's interesting.... Need to spend time to figure out and change variable names! But I think using binary is good and will allow me to encrypt and decrypt virtually any file type
-
-    final encrypted = encryptor.encryptBytes(imgbytes1, iv: AESiv);
-    // get the directory of file
-    var outputFile =
-        File(p.join(p.dirname(file.path), p.basename(file.path) + ".cerb"));
-    // encrypt AESkey with pubkey
-    final encryptedAESKey =
-        await RSA.encryptOAEPBytes(AESkey.bytes, "Key", Hash.SHA512, pubKey);
-    final encryptedAESIV =
-        await RSA.encryptOAEPBytes(AESiv.bytes, "IV", Hash.SHA512, pubKey);
-    // write encryptedAESKey and encryptedAESIV to outputFile
-    outputFile.writeAsBytesSync(encryptedAESKey);
-    outputFile.writeAsBytesSync(
-      encryptedAESIV,
-      mode: FileMode.append,
-    );
-    // write encrypted to outputFile
-    outputFile.writeAsBytesSync(encrypted.bytes, mode: FileMode.append);
-    return file;
-    */
 }
