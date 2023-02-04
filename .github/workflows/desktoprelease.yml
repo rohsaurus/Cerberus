@@ -5,7 +5,7 @@ on:
     branches:
       - Main
     paths:
-      - 'versioning'
+      - "versionNumber.txt"
 
 jobs:
   linux:
@@ -15,6 +15,10 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable'
+      - name: Get version
+        working-directory: ./cerberus
+        id: vars
+        run: echo "version=$(cat versionNumber.txt)" >> $GITHUB_OUTPUT
       - name: Install os dependencies
         run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
       - name: Install project dependencies
@@ -33,15 +37,15 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: cerberus-${{github.ref_name}}-linux.zip
+          filename: cerberus-${{GITHUB_OUTPUT}}-linux.zip
           directory: cerberus/build/linux/x64/release/bundle
       - name: Release to github
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{github.ref_name}}
-          files: cerberus/build/linux/x64/release/bundle/cerberus-${{github.ref_name}}-linux.zip
+          tag_name: ${{GITHUB_OUTPUT}}
+          files: cerberus/build/linux/x64/release/bundle/cerberus-${{GITHUB_OUTPUT}}-linux.zip
 
   windows:
     runs-on: windows-latest
