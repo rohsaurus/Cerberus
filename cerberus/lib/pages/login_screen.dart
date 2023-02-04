@@ -1,13 +1,13 @@
 import "dart:io";
 import "dart:convert";
 import "dart:async";
-import 'package:cerberus/CloudflareWorkers/sign_up.dart';
-import 'package:cerberus/pages/sign_up_screen.dart';
+import '../CloudflareWorkers/sign_up.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import "package:flutter/foundation.dart" show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import "home_screen.dart";
+import "sign_up_screen.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

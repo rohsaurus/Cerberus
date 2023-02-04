@@ -1,5 +1,5 @@
 import "dart:io";
-import 'package:cerberus/CloudflareWorkers/keys.dart';
+import "../CloudflareWorkers/keys.dart";
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:aes256gcm/aes256gcm.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";

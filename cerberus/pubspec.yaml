@@ -47,12 +47,10 @@ dependencies:
   crypton: ^2.0.5
   steel_crypt: ^3.0.0+1
   fast_rsa: ^3.4.7
-  aes256gcm: ^1.0.1
   file_picker: ^4.6.1
-  encrypt: 
-    git: 
-      url: https://github.com/leocavalcante/encrypt.git
-      ref: 5.x
+  cryptography: ^2.0.5
+  aes256gcm: ^1.0.1
+  simple_circular_progress_bar: ^1.0.2
 
 
 dev_dependencies:

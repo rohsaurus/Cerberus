@@ -1,13 +1,9 @@
-import 'dart:convert' show utf8;
 import "dart:io";
-import 'dart:typed_data';
-import 'package:aes256gcm/aes256gcm.dart';
-import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import "package:encrypt/encrypt.dart" as encrypt;
-import 'package:fast_rsa/fast_rsa.dart';
-import 'package:cerberus/CloudflareWorkers/keys.dart';
+import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import 'decryptFiles.dart';
+import 'encryptFiles.dart';
 
 class Button extends StatefulWidget {
   final String _text;
@@ -95,55 +91,30 @@ class _ButtonState extends State<Button> {
                           TextButton(
                             child: Text("Encrypt"),
                             onPressed: () async {
-                              // Lets the user pick one file; files with any file extension can be selected
-                              FilePickerResult? result = await FilePicker
-                                  .platform
-                                  .pickFiles(type: FileType.any);
-                              // The result will be null, if the user aborted the dialog
-                              if (result != null) {
-                                File file =
-                                    File((result.files.first.path).toString());
-                                var dbConnect =
-                                    Keys.emailOnly(_emailController.text);
-                                String pubKey = await dbConnect.getKeys(0);
-                                Uint8List imgbytes1 = file.readAsBytesSync();
-                                final AESkey = encrypt.Key.fromSecureRandom(32);
-                                final AESiv = encrypt.IV.fromSecureRandom(16);
-                                final encryptor = encrypt.Encrypter(encrypt
-                                    .AES(AESkey, mode: encrypt.AESMode.gcm));
-                                // @bug: some weird thing when I tested using a 6.5mb pdf file. When I did the encryption on the imgbytes1, the bytes balloned to 35mb...
-                                // @bug: I need to fix the variable names on both encryption and decryption. For example, somehow encryptedAESKEy and encryptedFileContents are the same? It's interesting.... Need to spend time to figure out and change variable names! But I think using binary is good and will allow me to encrypt and decrypt virtually any file type
-
-                                final encrypted = encryptor
-                                    .encryptBytes(imgbytes1, iv: AESiv);
-                                // get the directory of file
-                                var outputFile = File(p.join(
-                                    p.dirname(file.path),
-                                    p.basename(file.path) + ".cerb"));
-                                // encrypt AESkey with pubkey
-                                final encryptedAESKey =
-                                    await RSA.encryptOAEPBytes(AESkey.bytes,
-                                        "Key", Hash.SHA512, pubKey);
-                                final encryptedAESIV =
-                                    await RSA.encryptOAEPBytes(
-                                        AESiv.bytes, "IV", Hash.SHA512, pubKey);
-                                // write encryptedAESKey and encryptedAESIV to outputFile
-                                outputFile.writeAsBytesSync(encryptedAESKey);
-                                outputFile.writeAsBytesSync(
-                                  encryptedAESIV,
-                                  mode: FileMode.append,
-                                );
-                                // write encrypted to outputFile
-                                outputFile.writeAsBytesSync(encrypted.bytes,
-                                    mode: FileMode.append);
-                                // show a snackbar that says the file was encrypted
+                              // create percent indicateer to let the user know that the file is being encrypted
+                              if (_emailController.text.isNotEmpty) {
+                                // Lets the user pick one file; files with any file extension can be selected
+                                FilePickerResult? result = await FilePicker
+                                    .platform
+                                    .pickFiles(type: FileType.any);
+                                // The result will be null, if the user aborted the dialog
+                                if (result != null) {
+                                  Future <File> file = encryptFile(
+                                      result, _emailController.text);
+                                  
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                        "Encryption was Succesful!\nFile located at: ${file.path}"),
+                                  ));
+                                  Navigator.pop(context);
+                                }
+                              } else {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
-                                  content: Text(
-                                      "Encryption was Succesful!\nFile located at: ${file.path}"),
+                                  content: Text("Please enter an email"),
                                 ));
                               }
-                              Navigator.pop(context);
                             },
                           ),
                         ],
@@ -172,49 +143,8 @@ class _ButtonState extends State<Button> {
                                     .pickFiles(type: FileType.any);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
-                                  File file = File(
-                                      (result.files.first.path).toString());
-                                  var dbConnect =
-                                      Keys.emailOnly(Button.getEmail());
-                                  String privKey = await dbConnect.getKeys(1);
-                                  // generate the same AES key as the one used to encrypt the file using _password and decrypting the private key
-                                  privKey = await Aes256Gcm.decrypt(
-                                      privKey, Button.getPassword());
-                                  // get the directory of file
-                                  var outputFile = File(p.join(
-                                      p.dirname(file.path),
-                                      p.basenameWithoutExtension(file.path)));
-                                  // read lines one and two of the file - one is the encrypted AES key and the other is the encrypted AES IV
-                                  final fileContents = file.readAsBytesSync();
-                                  final encryptedKeyAndIVSize =
-                                      512; // SHA512 made it 512 bytes
-                                  final encryptedAESKey = fileContents.sublist(
-                                      0, encryptedKeyAndIVSize);
-                                  final encryptedAESIV = fileContents.sublist(
-                                      encryptedKeyAndIVSize,
-                                      encryptedKeyAndIVSize * 2);
-                                  final encryptedContents = fileContents
-                                      .sublist(encryptedKeyAndIVSize * 2);
-                                  // decrypt encryptedAESKey and encryptedAESIV with privkey
-                                  final decryptedAESKeyBytes =
-                                      await RSA.decryptOAEPBytes(
-                                          encryptedAESKey,
-                                          "Key",
-                                          Hash.SHA512,
-                                          privKey);
-                                  final decryptedAESIVBytes =
-                                      await RSA.decryptOAEPBytes(encryptedAESIV,
-                                          "IV", Hash.SHA512, privKey);
-                                  final key = encrypt.Key(decryptedAESKeyBytes);
-                                  final iv = encrypt.IV(decryptedAESIVBytes);
-                                  final decryptor = encrypt.Encrypter(encrypt
-                                      .AES(key, mode: encrypt.AESMode.gcm));
-                                  // decrypt the file contents
-                                  final decrypted = decryptor.decrypt(
-                                      encrypt.Encrypted(encryptedContents),
-                                      iv: iv);
-                                  // write decrypted to outputFile
-                                  outputFile.writeAsStringSync(decrypted);
+                                  File file = await decryptFiles(result,
+                                      Button.getEmail(), Button.getPassword());
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
                                     content: Text(

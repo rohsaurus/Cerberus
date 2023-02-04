@@ -161,14 +161,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
-  clock:
-    dependency: transitive
-    description:
-      name: clock
-      sha256: cb6d7f03e1de671e34607e909a7213e31d7752be4fb66a86d29fe1eb14bfb5cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   code_builder:
     dependency: transitive
     description:
@@ -202,7 +194,7 @@ packages:
     source: hosted
     version: "3.0.2"
   cryptography:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cryptography
       sha256: e0e37f79665cd5c86e8897f9abe1accfe813c0cc5299dab22256e22fddc1fef8
@@ -305,15 +297,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.17"
-  encrypt:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "5.x"
-      resolved-ref: "06c0fe61b7f64710b8e013ff30951ee805282535"
-      url: "https://github.com/leocavalcante/encrypt.git"
-    source: git
-    version: "5.0.2"
   fast_rsa:
     dependency: "direct main"
     description:
@@ -748,6 +731,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
+  simple_circular_progress_bar:
+    dependency: "direct main"
+    description:
+      name: simple_circular_progress_bar
+      sha256: e661ca942fbc617298e975b41fde19003d995de73ca6c2a1526c54d52f07151b
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   sky_engine:
     dependency: transitive
     description: flutter
