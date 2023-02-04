@@ -5,7 +5,7 @@ on:
     branches:
       - Main
     paths:
-      - "versionNumber.txt"
+      - "./cerberus/versionNumber.txt"
 
 jobs:
   linux:
