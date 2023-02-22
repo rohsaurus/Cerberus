@@ -42,7 +42,7 @@ And feel free to
 ## 📝 License
 
 Copyright © 2023 [Rohan Parikh](https://github.com/rohsaurus).<br />
-This project is [BSD--3](https://github.com/rohsaurus/Cerberus/blob/Main/License) licensed.
+This project is [BSD-3](https://github.com/rohsaurus/Cerberus/blob/Main/License) licensed.
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
