@@ -1,3 +1,6 @@
 {
-    "rpc.enabled": true
+    "rpc.enabled": true,
+    "java.project.sourcePaths": [
+        ""
+    ]
 }

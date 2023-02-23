@@ -24,11 +24,14 @@ jobs:
       - name: Enable linux build
         working-directory: ./cerberus
         run: flutter config --enable-linux-desktop
+      - name: Define enviornment variable
+        working-directory: ./cerberus
+        env:
+          KEY_TOKEN: ${{ secrets.AUTH }}
+        run: touch .env && echo $KEY_TOKEN > .env
       - name: Build artifacts
         working-directory: ./cerberus
-        env: 
-          KEY_TOKEN: ${{ secrets.AUTH }}
-        run: flutter build linux --dart-define=auth=$KEY_TOKEN --release
+        run: flutter build linux --release
       - name: Package Release files
         uses: thedoctor0/zip-release@master
         with:
@@ -60,11 +63,14 @@ jobs:
       - name: Enable windows build
         working-directory: ./cerberus
         run: flutter config --enable-windows-desktop
+      - name: Define enviornment variable
+        working-directory: ./cerberus
+        env:
+          KEY_TOKEN: ${{ secrets.AUTH }}
+        run: echo $KEY_TOKEN > .env
       - name: Build artifacts
         working-directory: ./cerberus
-        env: 
-          KEY_TOKEN: ${{ secrets.AUTH }}
-        run: flutter build windows --dart-define=auth=$KEY_TOKEN --release
+        run: flutter build windows --release
       - name: Package Release
         uses: thedoctor0/zip-release@master
         with:
@@ -78,3 +84,41 @@ jobs:
         with:
           tag_name: ${{github.ref_name}}
           files: cerberus/build/windows/runner/Release/cerberus-${{github.ref_name}}-windows.zip
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - name: Install project dependencies
+        working-directory: ./cerberus
+        run: flutter pub get
+      - name: Generate intermediates
+        working-directory: ./cerberus
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Enable macos build
+        working-directory: ./cerberus
+        run: flutter config --enable-macos-desktop
+      - name: Define enviornment variable
+        working-directory: ./cerberus
+        env:
+          KEY_TOKEN: ${{ secrets.AUTH }}
+        run: echo $KEY_TOKEN > .env
+      - name: Build artifacts
+        working-directory: ./cerberus
+        run: flutter build macos --release
+      - name: Package Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: cerberus-${{github.ref_name}}-macos.zip
+          directory: cerberus/build/macos/Build/Products/Release
+      - name: Release to github
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{github.ref_name}}
+          files: cerberus/build/macos/Build/Products/Release/cerberus-${{github.ref_name}}-macos.zip
+      
