@@ -4,10 +4,11 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:google_fonts/google_fonts.dart';
 import './pages/login_screen.dart';
 import "./pages/sign_up_screen.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future <void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await dotenv.load(fileName: ".env");
   // if running on windows, add acrylic affect, otherwise no effect
   if (Platform.isWindows) {
     await Window.initialize();
