@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Keys {
   @required
@@ -8,13 +9,27 @@ class Keys {
   String _pubKey = "";
   String _privKey = "";
   var headers = {
-    'authorization':
-        String.fromEnvironment("auth"),
     'Content-Type': 'application/json'
   };
   // make a constructor that takes in those three values
-  Keys(this._email, this._pubKey, this._privKey);
-  Keys.emailOnly(this._email);
+  Keys(this._email, this._pubKey, this._privKey) {
+    // check to make sure that AUTH_KEY is not null
+    String AUTH_KEY = dotenv.env['AUTH_KEY'] ?? 'NoValue';
+    if (AUTH_KEY == 'NoValue') {
+      print('AUTH_KEY is null');
+      return;
+    }
+    headers['authorization'] = AUTH_KEY;
+  }
+  Keys.emailOnly(this._email) {
+    // check to make sure that AUTH_KEY is not null
+    String AUTH_KEY = dotenv.env['AUTH_KEY'] ?? 'NoValue';
+    if (AUTH_KEY == 'NoValue') {
+      print('AUTH_KEY is null');
+      return;
+    }
+    headers['authorization'] = AUTH_KEY;
+  }
 
   void postKeys() async {
     var request = http.Request(
