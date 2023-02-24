@@ -140,7 +140,10 @@ class _ButtonState extends State<Button> {
                                 // Lets the user pick one file; files with any file extension can be selected
                                 FilePickerResult? result = await FilePicker
                                     .platform
-                                    .pickFiles(type: FileType.any);
+                                    .pickFiles(type: FileType.custom,
+                                        allowedExtensions: [
+                                      "cerb"
+                                    ]);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
                                   File file = await decryptFiles(result,
