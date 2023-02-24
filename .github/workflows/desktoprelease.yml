@@ -1,9 +1,7 @@
 name: Flutter Desktop Deployment
 
 on:
-  push:
-    branches:
-      - Main
+  workflow_dispatch
 
 jobs:
   linux:
