@@ -1,3 +1,5 @@
+import 'package:password_strength/password_strength.dart';
+
 import "../CloudflareWorkers/keys.dart";
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:aes256gcm/aes256gcm.dart';
@@ -378,8 +380,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: CircularProgressIndicator(),
           );
         });
-
-    if (_confirmPasswordController.text != _passwordController.text) {
+    // checking if the password is too weak or not
+    if (estimatePasswordStrength(_passwordController.text) < 0.3) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Your password is too weak. Please try again."),
+              actions: [
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      // clearing the password fields and the confirm password field and closing the loading circle
+                      _passwordController.clear();
+                      _confirmPasswordController.clear();
+                      Navigator.of(context).pop();
+                    });
+                  },
+                )
+              ],
+            );
+          });
+    }
+    else if (_confirmPasswordController.text != _passwordController.text) {
       showDialog(
           context: context,
           builder: (context) {
