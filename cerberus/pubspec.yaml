@@ -52,6 +52,7 @@ dependencies:
   aes256gcm: ^1.0.1
   simple_circular_progress_bar: ^1.0.2
   flutter_dotenv: ^5.0.2
+  password_strength: ^0.2.0
 
 
 dev_dependencies:
