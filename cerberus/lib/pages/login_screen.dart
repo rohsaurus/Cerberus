@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02),
                         Text(
-                          "The Passwordless File-Transfer Utility",
+                          "The Passwordless File Encryption Transfer Utility",
                           style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 30.0,
@@ -239,57 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: EdgeInsets.all(16.0),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
-                      onPressed: () async {
-                        // check if email controller and password controller are filled out, and if so run the login function
-                        // otherwise show error to the user and prompt them to fill out all the fields
-                        if (_emailController.text.isNotEmpty &&
-                            _passwordController.text.isNotEmpty) {
-                          bool _loginGood = await _loginData();
-                          if (_loginGood) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen(
-                                        email: _emailController.text,
-                                        password: _passwordController.text)));
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text("Error"),
-                                    content: Text("Invalid email or password"),
-                                    actions: [
-                                      TextButton(
-                                        child: Text("OK"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
-                        } else {
-                          // show error and promptuser to fill out all the fields
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text("Please fill out all fields"),
-                                  actions: [
-                                    TextButton(
-                                      child: Text("Close"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
-                        }
-                      },
+                      onPressed: () => signIn(),
                       child: Text("Login")),
                 ),
               ],
@@ -322,6 +272,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // need to get password from the database
     var loginObj = SignUp(_emailController.text, _passwordController.text);
     var JSONResponse = await loginObj.getUser();
+    // if user doesn't exist
+    if (JSONResponse.containsValue("null")) {
+      return false;
+    }
     // need to grab password hash from the map
     var passwordHash = JSONResponse["password"];
     // verifying if hashes match up
@@ -340,5 +294,76 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     print("Was verified? $verified");
     return verified;
+  }
+
+  Future signIn() async {
+    // loading circle
+    showDialog(
+        context: context,
+        builder: ((context) {
+          return Center(child: CircularProgressIndicator.adaptive());
+        }));
+    // check if email controller and password controller are filled out, and if so run the login function
+    // otherwise show error to the user and prompt them to fill out all the fields
+    if (_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      bool _loginGood = await _loginData();
+      if (_loginGood) {
+        // popping loading circle to allow user to navigate to home screen
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                    email: _emailController.text,
+                    password: _passwordController.text)));
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("Invalid email or password"),
+                actions: [
+                  TextButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        // clearing the password text field and popping the loading circle
+                        _passwordController.clear();
+                        Navigator.pop(context);
+                      });
+                    },
+                  )
+                ],
+              );
+            });
+        // popping loading circle to allow user
+      }
+    } else {
+      // show error and promptuser to fill out all the fields
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Please fill out all fields"),
+              actions: [
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      // clearing the password text field and popping the loading circle
+                      _passwordController.clear();
+                      Navigator.pop(context);
+                    });
+                  },
+                )
+              ],
+            );
+          });
+    }
   }
 }

@@ -1,10 +1,8 @@
-import "dart:io";
 import "../CloudflareWorkers/keys.dart";
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:aes256gcm/aes256gcm.dart';
 import "package:dargon2_flutter/dargon2_flutter.dart";
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import "./login_screen.dart";
@@ -76,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     Column(
                       children: [
-                        Text("Cerberus (Sign Up Test)",
+                        Text("Cerberus",
                             style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 36.0,
@@ -84,7 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02),
                         Text(
-                          "The Passwordless File-Transfer Utility",
+                          "The Passwordless File Encryption Transfer Utility",
                           style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 30.0,
@@ -100,9 +98,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Expanded(
               // if platform is windows, use acrylic effect otherwise both methods are the same
               //child: !kIsWeb && Platform.isWindows
-                //  ? credentialsWindows(context)
-                  //: credentialsLinux(context)),
-                  child: credentialsLinux(context))
+              //  ? credentialsWindows(context)
+              //: credentialsLinux(context)),
+              child: credentialsLinux(context))
         ]));
   }
 
@@ -352,77 +350,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           padding: EdgeInsets.all(16.0),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
-                      onPressed: () async {
-                        // check if email controller and password controller are filled out, and if so run the login function
-                        // otherwise show error to the user and prompt them to fill out all the fields
-                        if (_confirmPasswordController.text !=
-                            _passwordController.text) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(
-                                      "Your passwords do not match. Please try again."),
-                                  actions: [
-                                    TextButton(
-                                      child: Text("Close"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
-                        } else if ((_emailController.text.isNotEmpty &&
-                                _passwordController.text.isNotEmpty) &&
-                            EmailValidator.validate(_emailController.text)) {
-                          // if the email is not already used, then run the login function
-                          // otherwise show error to the user and prompt them to fill out all the fields
-                          bool emailInUse = await _isEmailAlreadyInUse(
-                              _emailController.text, _passwordController.text);
-                          if (!emailInUse) {
-                            _loginData();
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text("Error"),
-                                    content: Text(
-                                        "This email is already used. Please login."),
-                                    actions: [
-                                      TextButton(
-                                        child: Text("Close"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
-                        } else {
-                          // show error and promptuser to fill out all the fields
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(
-                                      "Please fill out all fields and make sure your email is valid"),
-                                  actions: [
-                                    TextButton(
-                                      child: Text("Close"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
-                        }
-                      },
+                      onPressed: () async => signUp(),
                       child: Text("Sign Up"))),
             ],
           ),
@@ -441,6 +369,100 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Future signUp() async {
+    // loading circle
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
+    if (_confirmPasswordController.text != _passwordController.text) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Your passwords do not match. Please try again."),
+              actions: [
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      // clearing the password fields and the confirm password field and closing the loading circle
+                      _passwordController.clear();
+                      _confirmPasswordController.clear();
+                      Navigator.of(context).pop();
+                    });
+                  },
+                )
+              ],
+            );
+          });
+    } else if ((_emailController.text.isNotEmpty &&
+            _passwordController.text.isNotEmpty) &&
+        EmailValidator.validate(_emailController.text)) {
+      // if the email is not already used, then run the login function
+      // otherwise show error to the user and prompt them to fill out all the fields
+      bool emailInUse = await _isEmailAlreadyInUse(
+          _emailController.text, _passwordController.text);
+      if (!emailInUse) {
+        _loginData();
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("This email is already used. Please login."),
+                actions: [
+                  TextButton(
+                    child: Text("Close"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        // clearing the password fields and the confirm password field as well as the email field and closing the loading circle
+                        _emailController.clear();
+                        _passwordController.clear();
+                        _confirmPasswordController.clear();
+                        Navigator.of(context).pop();
+                      });
+                    },
+                  )
+                ],
+              );
+            });
+      }
+    } else {
+      // show error and promptuser to fill out all the fields
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text(
+                  "Please fill out all fields and make sure your email is valid"),
+              actions: [
+                TextButton(
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      // clearing the confirm password field and closing the loading circle
+                      _confirmPasswordController.clear();
+                      Navigator.of(context).pop();
+                    });
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
   void _loginData() async {
     //hashing password using argon2i
     DArgon2Flutter.init();
@@ -448,7 +470,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var result =
         await argon2.hashPasswordString(_passwordController.text, salt: s);
     var stringEncoded = result.encodedString;
-    print("String Encoded: $stringEncoded");
     var signUpObject = SignUp(_emailController.text, stringEncoded);
     signUpObject.signup();
     _statusCode = signUpObject.statusCode;
@@ -456,8 +477,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // run a function that will generate the user's keypairs and save them to the database
       // then navigate to the home screen
       _generateKeyPairs(_passwordController.text, _emailController.text);
+      // poping loading circle
+      Navigator.of(context).pop();
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen(email: _emailController.text,password: _passwordController.text,)));
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  )));
     } else {
       showDialog(
           context: context,
@@ -484,12 +512,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-void _generateKeyPairs(_password, _email) async{
+void _generateKeyPairs(_password, _email) async {
   var _result = await RSA.generate(4096);
   String _privKey = _result.privateKey;
   String _pubKey = _result.publicKey;
   var _encrypted = await Aes256Gcm.encrypt(_privKey, _password);
   // posting the Keys to the database
-  var _postKeys = Keys(_email,_pubKey, _encrypted);
+  var _postKeys = Keys(_email, _pubKey, _encrypted);
   _postKeys.postKeys();
 }
