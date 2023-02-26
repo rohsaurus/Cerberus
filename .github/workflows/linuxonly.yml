@@ -24,7 +24,7 @@ jobs:
         run: flutter config --enable-linux-desktop
       - name: Define enviornment variable
         working-directory: ./cerberus
-        run: echo ${{ secrets.AUTH }} && echo ${{ secrets.AUTH }} > .env && cat .env
+        run: echo ${{ secrets.AUTH }} && echo "AUTH_KEY=${{ secrets.AUTH }}" > .env && cat .env
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build linux --release
