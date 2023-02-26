@@ -9,12 +9,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future <void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  // if running on windows, add acrylic affect, otherwise no effect
-  if (Platform.isWindows) {
-    await Window.initialize();
-    await Window.setEffect(
-        effect: WindowEffect.aero, color: Color.fromARGB(0, 0, 0, 0));
-  }
   runApp(MyApp());
 }
 
@@ -25,7 +19,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Cerberus",
-        theme: ThemeData(fontFamily: GoogleFonts.poppins().fontFamily),
+        theme: ThemeData(
+          fontFamily: GoogleFonts.poppins().fontFamily),
         home: LoginScreen());
   }
 }

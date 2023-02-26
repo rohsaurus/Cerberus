@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color.fromARGB(178, 3, 25, 42),
         body: Row(children: [
           Expanded(
             flex: 2,
@@ -36,8 +36,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
+                          // old image url: https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F06%2FLandscapes-mountains-snow-skies-stars-starry-night-nature.jpg&f=1&nofb=1
                           image: NetworkImage(
-                              "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.pixelstalk.net%2Fwp-content%2Fuploads%2F2016%2F06%2FLandscapes-mountains-snow-skies-stars-starry-night-nature.jpg&f=1&nofb=1"),
+                              "https://1.bp.blogspot.com/-zl8d3Rd9FAI/VOcjUFsbU2I/AAAAAAAAU7w/dsUSgJc1CZg/s1600/Under%2BMatterhorn%2C%2B3%2C000m%2BValais%2BAlps%2C%2BSwitzerland%2B-%2BI%2BAm%2BA%2BMountain%2BPhotographer%2BAnd%2BI%2BSpent%2B6%2BYears%2BPhotographing%2BMy%2BTent%2BIn%2BThe%2BMountains.jpg", ),
                           fit: BoxFit.cover)),
                 ),
                 Container(
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget credentialsWindows(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        color: Color.fromARGB(52, 117, 117, 117),
+        color: Color.fromARGB(106, 117, 117, 117),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -254,6 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
                       onPressed: () {
+                        Navigator.of(context).pop();
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => SignUpScreen()));
                       },
@@ -292,7 +294,6 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e.toString());
       verified = false;
     }
-    print("Was verified? $verified");
     return verified;
   }
 
