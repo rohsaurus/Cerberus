@@ -78,11 +78,40 @@ class _ButtonState extends State<Button> {
                         content: TextField(
                           controller: _emailController,
                           decoration: InputDecoration(
-                            labelText:
-                                "Enter the email of the person you want to encrypt the file for",
-                          ),
+                              labelText: "Enter Recipient's Email"),
                         ),
                         actions: [
+                          TextButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(actions: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.017,
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.015,
+                                        ),
+                                        child: Text(
+                                            "Enter the email of the recipient of the file. Note that this email must be the same that the recipient used to sign up for Cerberus. Also note, Cerberus does not email the file! The encrypted file will be avaliable at the same path as the original file, which will also show up in the bottom of the screen after encryption is complete.",style: TextStyle(fontSize: 16),textAlign: TextAlign.center,),
+                                      ),
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ]);
+                                  },
+                                );
+                              },
+                              child: Text("More Information")),
                           TextButton(
                             child: Text("Cancel"),
                             onPressed: () {
@@ -138,12 +167,10 @@ class _ButtonState extends State<Button> {
                               child: Text("Decrypt"),
                               onPressed: () async {
                                 // Lets the user pick one file; files with any file extension can be selected
-                                FilePickerResult? result = await FilePicker
-                                    .platform
-                                    .pickFiles(type: FileType.custom,
-                                        allowedExtensions: [
-                                      "cerb"
-                                    ]);
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: ["cerb"]);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
                                   File file = await decryptFiles(result,
