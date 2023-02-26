@@ -24,7 +24,7 @@ jobs:
         run: flutter config --enable-linux-desktop
       - name: Define enviornment variable
         working-directory: ./cerberus
-        run: touch .env && echo ${{ secrets.AUTH }} > .env
+        run: echo "AUTH_KEY=${{ secrets.AUTH }}" > .env
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build linux --release
@@ -63,7 +63,7 @@ jobs:
         working-directory: ./cerberus
         env:
           KEY_TOKEN: ${{ secrets.AUTH }}
-        run: echo $KEY_TOKEN > .env
+        run: echo "AUTH_KEY=$KEY_TOKEN" > .env
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build windows --release
@@ -100,7 +100,7 @@ jobs:
         working-directory: ./cerberus
         env:
           KEY_TOKEN: ${{ secrets.AUTH }}
-        run: echo $KEY_TOKEN > .env
+        run: echo "AUTH_KEY=$KEY_TOKEN" > .env
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build macos --release
