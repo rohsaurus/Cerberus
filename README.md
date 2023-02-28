@@ -1,10 +1,10 @@
 <h1 align="center">Welcome to Cerberus 👋</h1>
-<p>
   </a>
   <a href="https://github.com/rohsaurus/Cerberus/blob/Main/License" target="_blank">
     <img alt="License: BSD--3" src="https://img.shields.io/badge/License-BSD--3-yellow.svg" />
   </a>
-</p>
+  
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
 
 
 > Cerberus uses XChaCha20 and RSA to allow you to encrypt any file and send it across the web securly, without the need to share a password! No longer do you need to text the password to the recipient, or send an email with an attached RSA key. Instead, simply fire up Cerberus and type in the email of the recipient. Then send the encrypted file to the recipient, where all your friend needs to do is simply open up the file with Cerberus! No need to enter in a password, or import some RSA key!
