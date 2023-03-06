@@ -99,7 +99,10 @@ class _ButtonState extends State<Button> {
                                               0.015,
                                         ),
                                         child: Text(
-                                            "Enter the email of the recipient of the file. Note that this email must be the same that the recipient used to sign up for Cerberus. Also note, Cerberus does not email the file! The encrypted file will be avaliable at the same path as the original file, which will also show up in the bottom of the screen after encryption is complete.",style: TextStyle(fontSize: 16),textAlign: TextAlign.center,),
+                                          "Enter the email of the recipient of the file. Note that this email must be the same that the recipient used to sign up for Cerberus. Also note, Cerberus does not email the file! The encrypted file will be avaliable at the same path as the original file, which will also show up in the bottom of the screen after encryption is complete.",
+                                          style: TextStyle(fontSize: 16),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                       TextButton(
                                         child: Text("Close"),
@@ -129,14 +132,7 @@ class _ButtonState extends State<Button> {
                                     .pickFiles(type: FileType.any);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
-                                  File file = await encryptFile(
-                                      result, _emailController.text);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Encryption was Succesful!\nFile located at: ${file.path}"),
-                                  ));
-                                  Navigator.pop(context);
+                                  await encryptRunnerMethod(result, context);
                                 }
                               } else {
                                 ScaffoldMessenger.of(context)
@@ -173,13 +169,7 @@ class _ButtonState extends State<Button> {
                                         allowedExtensions: ["cerb"]);
                                 // The result will be null, if the user aborted the dialog
                                 if (result != null) {
-                                  File file = await decryptFiles(result,
-                                      Button.getEmail(), Button.getPassword());
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Decryption was Succesful!\n File located at: ${file.path}"),
-                                  ));
+                                  await decryptRunnerMethod(result, context);
                                 }
                                 Navigator.pop(context);
                               }),
@@ -190,5 +180,65 @@ class _ButtonState extends State<Button> {
             }),
       ),
     );
+  }
+
+  Future<void> decryptRunnerMethod(
+      FilePickerResult result, BuildContext context) async {
+    // create percent indicateer to let the user know that the file is being encrypted
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Decrypting File"),
+            content: SimpleCircularProgressBar(
+              mergeMode: true,
+              onGetText: (double value) {
+                return Text('${value.toInt()}%');
+              },
+              progressColors: [
+                Color.fromARGB(214, 252, 203, 6),
+              ],
+            ),
+          );
+        });
+    File file =
+        await decryptFiles(result, Button.getEmail(), Button.getPassword());
+        // removing the percent indicater when decryption is complete
+    setState(() {
+      Navigator.of(context).pop();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content:
+          Text("Decryption was Succesful!\n File located at: ${file.path}"),
+    ));
+  }
+
+  Future<void> encryptRunnerMethod(
+      FilePickerResult result, BuildContext context) async {
+    // create percent indicateer to let the user know that the file is being encrypted
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Encrypting File"),
+            content: SimpleCircularProgressBar(
+              mergeMode: true,
+              onGetText: (double value) {
+                return Text('${value.toInt()}%');
+              },
+              progressColors: [
+                Color.fromARGB(214, 252, 203, 6),
+              ],
+            ),
+          );
+        });
+    File file = await encryptFile(result, _emailController.text);
+    setState(() {
+      Navigator.of(context).pop();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Encryption was Succesful!\nFile located at: ${file.path}"),
+    ));
+    Navigator.pop(context);
   }
 }

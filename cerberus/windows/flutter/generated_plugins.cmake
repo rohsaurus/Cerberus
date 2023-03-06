@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   dargon2_flutter_desktop
   fast_rsa
   flutter_acrylic
+  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

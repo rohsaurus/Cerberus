@@ -33,24 +33,37 @@ Future<File> decryptFiles(
     // get cipherText
     final encryptedFileContents = data.sublist(1040);
     // decrypt the secret key
+
+    // Note: If user is trying to decrypt with the wrong email, here's the error message
+    // need to come up with some way to handle this and inform user
+    /* [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Instance of 'RSAException'
+#0      RSA._bytesResponse (package:fast_rsa/fast_rsa.dart:52:7)
+<asynchronous suspension>
+#1      RSA.decryptOAEPBytes (package:fast_rsa/fast_rsa.dart:248:12)
+<asynchronous suspension>
+#2      decryptFiles.<anonymous closure> (package:cerberus/button%20functions/decryptFiles.dart:36:32)
+<asynchronous suspension>
+*/
+
     final decryptedSecretKey = await fast.RSA.decryptOAEPBytes(
         encryptedSecretKey, "encryptedSecretKey", fast.Hash.SHA512, privKey);
     // decrypt the nonce
     final decryptedNonce = await fast.RSA.decryptOAEPBytes(
         encryptedNonce, "encryptedNonce", fast.Hash.SHA512, privKey);
-      // using the decrypted key to create a secretKey object that will be used to decrypt the file
+    // using the decrypted key to create a secretKey object that will be used to decrypt the file
     secretKey = SecretKey(decryptedSecretKey);
     Nonce = decryptedNonce;
     // create new SecretBox object
-    SecretBox secretBox = SecretBox(
-        encryptedFileContents, mac: Mac(encryptedMac), nonce: Nonce);
+    SecretBox secretBox =
+        SecretBox(encryptedFileContents, mac: Mac(encryptedMac), nonce: Nonce);
     final decrypted = algorithem.decrypt(secretBox, secretKey: secretKey);
     // now, time to write to the file!
     // get the file name
-    File outputFile = File(p.join(p.dirname(file.path),p.basenameWithoutExtension(file.path)));
+    File outputFile = File(
+        p.join(p.dirname(file.path), p.basenameWithoutExtension(file.path)));
     // write the decrypted contents to the file
     outputFile.writeAsBytes(await decrypted);
     file = outputFile;
-    });
+  });
   return file;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "../button functions/home_screen_buttons.dart";
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   String _email = "";
@@ -21,8 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  var encryption = Button("Encrypt", 0);
-  var decryption = Button("Decrypt", 1);
+  Button encryption = Button("Encrypt", 0);
+  Button decryption = Button("Decrypt", 1);
   
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       size: MediaQuery.of(context).size.height * .08,
                       color: Color.fromARGB(103, 255, 255, 255),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      // navigate to settings page
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SettingsScreen()));
+                    },
                   ),
                 )
               ]),
