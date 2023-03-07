@@ -1,0 +1,6 @@
+[submodule "Cloudflare-Workers-Keypair"]
+	path = Cloudflare-Workers-Keypair
+	url = https://github.com/rohsaurus/Cloudflare-Workers-Keypair.git
+[submodule "Cerberus-Authentication-Cloudflare-Worker"]
+	path = Cerberus-Authentication-Cloudflare-Worker
+	url = https://github.com/rohsaurus/Cerberus-Authentication-Cloudflare-Worker.git
