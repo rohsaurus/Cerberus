@@ -28,19 +28,22 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build linux --release
+      - name: Get version number
+        working-directory: ./cerberus
+        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
       - name: Package Release files
         uses: thedoctor0/zip-release@master
         with:
-          type: 'zip'
-          filename: cerberus-${{github.ref_name}}-linux.zip
+          type: 'tar'
+          filename: cerberus-$(versionNum)-linux.tar.gz
           directory: cerberus/build/linux/x64/release/bundle
       - name: Release to github
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{github.ref_name}}
-          files: cerberus/build/linux/x64/release/bundle/cerberus-${{github.ref_name}}-linux.zip
+          tag_name: $(versionNum)
+          files: cerberus/build/linux/x64/release/bundle/cerberus-$(versionNum)-linux.zip
 
   windows:
     runs-on: windows-latest
@@ -67,6 +70,8 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build windows --release
+      - name: Get Version Number
+        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
       - name: Package Release
         uses: thedoctor0/zip-release@master
         with:
@@ -104,17 +109,20 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build macos --release
+      - name: Get version number
+        working-directory: ./cerberus
+        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
       - name: Package Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: cerberus-${{github.ref_name}}-macos.zip
+          filename: cerberus-$(versionNum)-macos.zip
           directory: cerberus/build/macos/Build/Products/Release
       - name: Release to github
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{github.ref_name}}
-          files: cerberus/build/macos/Build/Products/Release/cerberus-${{github.ref_name}}-macos.zip
+          tag_name: $(versionNum)
+          files: cerberus/build/macos/Build/Products/Release/cerberus-$(versionNum)-macos.zip
       
