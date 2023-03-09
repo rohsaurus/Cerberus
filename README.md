@@ -90,5 +90,15 @@ And feel free to
 Copyright © 2023 [Rohan Parikh](https://github.com/rohsaurus).<br />
 This project is [BSD-3](https://github.com/rohsaurus/Cerberus/blob/Main/License) licensed.
 
+- [Install](#install)
+- [Usage](#usage)
+  - [Must do this for both Sender and Reciever first!](#must-do-this-for-both-sender-and-reciever-first)
+  - [Sender:](#sender)
+  - [Reciever:](#reciever)
+- [Author](#author)
+- [🤝 Contributing](#-contributing)
+- [Show your support](#show-your-support)
+- [📝 License](#-license)
+
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
