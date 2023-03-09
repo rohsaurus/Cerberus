@@ -69,7 +69,7 @@ And like, the file is decrypted, and ready for the reciever to use!
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/rohsaurus/Cerberus/issues). You can also take a look at the [contributing guide](N/A).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/rohsaurus/Cerberus/issues). You can also take a look at the [contributing guide](https://github.com/rohsaurus/Cerberus/blob/Main/contributing.md).
 
 ## Show your support
 
