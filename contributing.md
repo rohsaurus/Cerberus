@@ -1,3 +1,7 @@
+# Contributing to Cerberus
+Hey! First of all, thank you for contributing to Cerberus. It's people like you that makes open source software the success it is!
+
+## Table Of Contents
 - [Contributing to Cerberus](#contributing-to-cerberus)
 - [First of all, what is Cerberus, and how does it work?](#first-of-all-what-is-cerberus-and-how-does-it-work)
  - [Step by Step Breakdown of what is happening in the background](#step-by-step-breakdown-of-what-is-happening-in-the-background)
@@ -14,8 +18,6 @@
  - [Cloudflare Workers And Realm Sync](#cloudflare-workers-and-realm-sync)
  - [Adding the Auth Key to your Flutter Project](#adding-the-auth-key-to-your-flutter-project)
  - [Compiling](#compiling)
-# Contributing to Cerberus
-Hey! First of all, thank you for contributing to Cerberus. It's people like you that makes open source software the success it is!
 
 # First of all, what is Cerberus, and how does it work?
 
