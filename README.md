@@ -1,3 +1,12 @@
+- [Install](#install)
+- [Usage](#usage)
+  - [Must do this for both Sender and Reciever first!](#must-do-this-for-both-sender-and-reciever-first)
+  - [Sender:](#sender)
+  - [Reciever:](#reciever)
+- [Author](#author)
+- [🤝 Contributing](#-contributing)
+- [Show your support](#show-your-support)
+- [📝 License](#-license)
 <h1 align="center">Welcome to Cerberus 👋</h1>
   </a>
   <a href="https://github.com/rohsaurus/Cerberus/blob/Main/License" target="_blank">
