@@ -4,10 +4,10 @@
     <img alt="License: BSD--3" src="https://img.shields.io/badge/License-BSD--3-yellow.svg" />
   </a>
   
-MacOS is the only one not building ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
+> MacOS is the only one not building 
 
-
-> Cerberus uses XChaCha20 and RSA to allow you to encrypt any file and send it across the web securly, without the need to share a password! No longer do you need to text the password to the recipient, or send an email with an attached RSA key. Instead, simply fire up Cerberus and type in the email of the recipient. Then send the encrypted file to the recipient, where all your friend needs to do is simply open up the file with Cerberus! No need to enter in a password, or import some RSA key!
+Cerberus uses XChaCha20 and RSA to allow you to encrypt any file and send it across the web securly, without the need to share a password! No longer do you need to text the password to the recipient, or send an email with an attached RSA key. Instead, simply fire up Cerberus and type in the email of the recipient. Then send the encrypted file to the recipient, where all your friend needs to do is simply open up the file with Cerberus! No need to enter in a password, or import some RSA key!
 
 > 9 March 2023: The contributing guide is now live, in addition to many of the UX changes I was working on! The settings page is currently a work in progress, with more updates to it coming soon! If you would like to contribute to Cerberus, I'd love to have you! You can see the issues page to see what it is you'd want to work on, or you can also contribute general improvements to the program as well! (https://github.com/rohsaurus/Cerberus/blob/Main/contributing.md) 
 
