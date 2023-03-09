@@ -1,3 +1,19 @@
+- [Contributing to Cerberus](#contributing-to-cerberus)
+- [First of all, what is Cerberus, and how does it work?](#first-of-all-what-is-cerberus-and-how-does-it-work)
+ - [Step by Step Breakdown of what is happening in the background](#step-by-step-breakdown-of-what-is-happening-in-the-background)
+   - [User Creation](#user-creation)
+     - [User creates an account](#user-creates-an-account)
+     - [Logging in](#logging-in)
+   - [Encryption and Decryption](#encryption-and-decryption)
+     - [Encryption](#encryption)
+     - [Decryption](#decryption)
+- [Setting up your Environment](#setting-up-your-environment)
+ - [Setting up Flutter](#setting-up-flutter)
+ - [Cloning the git repo and setting up the Flutter Project](#cloning-the-git-repo-and-setting-up-the-flutter-project)
+ - [Creating the MongoDB Database](#creating-the-mongodb-database)
+ - [Cloudflare Workers And Realm Sync](#cloudflare-workers-and-realm-sync)
+ - [Adding the Auth Key to your Flutter Project](#adding-the-auth-key-to-your-flutter-project)
+ - [Compiling](#compiling)
 # Contributing to Cerberus
 Hey! First of all, thank you for contributing to Cerberus. It's people like you that makes open source software the success it is!
 
@@ -86,3 +102,20 @@ I've provided an example file (.env.example) to show you what you need. Simply r
 ## Compiling
 
 If all the steps above were successful, you should simply be able to run flutter run -d Windows, or clicking the play button on your IDE. Let me know if you have any questions!
+
+- [Contributing to Cerberus](#contributing-to-cerberus)
+- [First of all, what is Cerberus, and how does it work?](#first-of-all-what-is-cerberus-and-how-does-it-work)
+ - [Step by Step Breakdown of what is happening in the background](#step-by-step-breakdown-of-what-is-happening-in-the-background)
+   - [User Creation](#user-creation)
+     - [User creates an account](#user-creates-an-account)
+     - [Logging in](#logging-in)
+   - [Encryption and Decryption](#encryption-and-decryption)
+     - [Encryption](#encryption)
+     - [Decryption](#decryption)
+- [Setting up your Environment](#setting-up-your-environment)
+ - [Setting up Flutter](#setting-up-flutter)
+ - [Cloning the git repo and setting up the Flutter Project](#cloning-the-git-repo-and-setting-up-the-flutter-project)
+ - [Creating the MongoDB Database](#creating-the-mongodb-database)
+ - [Cloudflare Workers And Realm Sync](#cloudflare-workers-and-realm-sync)
+ - [Adding the Auth Key to your Flutter Project](#adding-the-auth-key-to-your-flutter-project)
+ - [Compiling](#compiling)
