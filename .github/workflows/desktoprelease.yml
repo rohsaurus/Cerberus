@@ -28,9 +28,14 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build linux --release
-      - name: Get version number
+      - name: Setup Python to get Version Number from Flutter Pubspec
+        uses: actions/setup-python@v4.5.0
+        with:
+          # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: 3.9.12
+      - name: Running Python Script to get Version Number and Exporting to enviornemnt variable
         working-directory: ./cerberus
-        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
+        run: python3 versionGetter.py && versionNum=$(echo $(cat versionNum.txt))
       - name: Package Release files
         uses: thedoctor0/zip-release@master
         with:
@@ -109,9 +114,14 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build macos --release
-      - name: Get version number
+      - name: Setup Python to get Version Number from Flutter Pubspec
+        uses: actions/setup-python@v4.5.0
+        with:
+          # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: 3.9.12
+      - name: Running Python Script to get Version Number and Exporting to enviornemnt variable
         working-directory: ./cerberus
-        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
+        run: python3 versionGetter.py && versionNum=$(echo $(cat versionNum.txt))
       - name: Package Release
         uses: thedoctor0/zip-release@master
         with:
