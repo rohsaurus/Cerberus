@@ -1,4 +1,5 @@
 <h1 align="center">Welcome to Cerberus 👋</h1>
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -7,7 +8,6 @@
     <img alt="License: BSD--3" src="https://img.shields.io/badge/License-BSD--3-yellow.svg" />
   </a>
   
-[![All Contributors](https://img.shields.io/github/all-contributors/rohsaurus/Cerberus?color=ee8449&style=flat-square)](#contributors) 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
 > MacOS is the only one not building 
 
