@@ -14,6 +14,13 @@ class SignUp {
     _password = password;
   }
 
+  // constructor with just email (used to check if the user is already in the database or not for encryption)
+  SignUp.emailOnly(email) {
+    AUTH_KEY = dotenv.env['AUTH_KEY'] ?? 'NoValue';
+    _email = email;
+  }
+
+
   void signup() async {
     // check to make sure that AUTH_KEY is not null
     if (AUTH_KEY == 'NoValue') {
