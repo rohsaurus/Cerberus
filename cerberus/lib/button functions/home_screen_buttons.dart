@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import "package:path/path.dart";
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import '../CloudflareWorkers/sign_up.dart';
 import 'decryptFiles.dart';
 import 'encryptFiles.dart';
 
@@ -125,7 +126,7 @@ class _ButtonState extends State<Button> {
                             child: Text("Encrypt"),
                             onPressed: () async {
                               // create percent indicateer to let the user know that the file is being encrypted
-                              if (_emailController.text.isNotEmpty) {
+                              if (_emailController.text.isNotEmpty && await _emailExists(_emailController)) {
                                 // Lets the user pick one file; files with any file extension can be selected
                                 FilePickerResult? result = await FilePicker
                                     .platform
@@ -135,10 +136,20 @@ class _ButtonState extends State<Button> {
                                   await encryptRunnerMethod(result, context);
                                 }
                               } else {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text("Please enter an email"),
-                                ));
+                                showDialog(context: context, builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text("The email you entered does not exist. Please try again."),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
                               }
                             },
                           ),
@@ -240,5 +251,10 @@ class _ButtonState extends State<Button> {
       content: Text("Encryption was Succesful!\nFile located at: ${file.path}"),
     ));
     Navigator.pop(context);
+  }
+  
+  Future<bool> _emailExists(TextEditingController emailController) async {
+    var email = SignUp.emailOnly(emailController.text);
+    return await email.checkUser();
   }
 }
