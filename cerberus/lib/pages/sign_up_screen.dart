@@ -430,11 +430,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           });
     } else if ((_emailController.text.isNotEmpty &&
             _passwordController.text.isNotEmpty) &&
-        EmailValidator.validate(_emailController.text)) {
+        EmailValidator.validate(_emailController.text.toLowerCase())) {
       // if the email is not already used, then run the login function
       // otherwise show error to the user and prompt them to fill out all the fields
       bool emailInUse = await _isEmailAlreadyInUse(
-          _emailController.text, _passwordController.text);
+          _emailController.text.toLowerCase(), _passwordController.text);
       if (!emailInUse) {
         _loginData();
       } else {
@@ -496,20 +496,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     var result =
         await argon2.hashPasswordString(_passwordController.text, salt: s);
     var stringEncoded = result.encodedString;
-    var signUpObject = SignUp(_emailController.text, stringEncoded);
+    var signUpObject = SignUp(_emailController.text.toLowerCase(), stringEncoded);
     signUpObject.signup();
     _statusCode = signUpObject.statusCode;
     if (_statusCode == 200) {
       // run a function that will generate the user's keypairs and save them to the database
       // then navigate to the home screen
-      _generateKeyPairs(_passwordController.text, _emailController.text);
+      _generateKeyPairs(_passwordController.text, _emailController.text.toLowerCase());
       // poping loading circle
       Navigator.of(context).pop();
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen(
-                    email: _emailController.text,
+                    email: _emailController.text.toLowerCase(),
                     password: _passwordController.text,
                   )));
     } else {
