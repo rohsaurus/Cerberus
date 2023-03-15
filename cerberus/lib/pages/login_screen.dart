@@ -272,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
     DArgon2Flutter.init();
 
     // need to get password from the database
-    var loginObj = SignUp(_emailController.text, _passwordController.text);
+    var loginObj = SignUp(_emailController.text.toLowerCase(), _passwordController.text);
     var JSONResponse = await loginObj.getUser();
     // if user doesn't exist
     if (JSONResponse.containsValue("null")) {
@@ -306,7 +306,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }));
     // check if email controller and password controller are filled out, and if so run the login function
     // otherwise show error to the user and prompt them to fill out all the fields
-    if (_emailController.text.isNotEmpty &&
+    if (_emailController.text.toLowerCase().isNotEmpty &&
         _passwordController.text.isNotEmpty) {
       bool _loginGood = await _loginData();
       if (_loginGood) {
@@ -316,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => HomeScreen(
-                    email: _emailController.text,
+                    email: _emailController.text.toLowerCase(),
                     password: _passwordController.text)));
       } else {
         showDialog(
