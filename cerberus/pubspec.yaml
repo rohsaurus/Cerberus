@@ -55,6 +55,7 @@ dependencies:
   password_strength: ^0.2.0
   settings_ui: ^2.0.2
   url_launcher: ^6.1.10
+  dio: ^5.0.0
 
 
 dev_dependencies:

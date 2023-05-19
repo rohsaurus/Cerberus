@@ -53,10 +53,10 @@ packages:
     dependency: "direct main"
     description:
       name: auth0
-      sha256: c456fa60670910e2661910c652464c32390b7ea742e9aecc95767a8aca431ea6
+      sha256: "4a25a4538d8810c5be55bfd8c75a56d8162ba7e2575381874041173177e7cc26"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0-beta1"
+    version: "2.2.1"
   basic_utils:
     dependency: transitive
     description:
@@ -282,13 +282,13 @@ packages:
     source: hosted
     version: "2.2.4"
   dio:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dio
-      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      sha256: "347d56c26d63519552ef9a569f2a593dda99a81fdbdff13c584b7197cfe05059"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "5.1.2"
   email_validator:
     dependency: "direct main"
     description:
@@ -679,10 +679,10 @@ packages:
     dependency: transitive
     description:
       name: pretty_dio_logger
-      sha256: "948f7eeb36e7aa0760b51c1a8e3331d4b21e36fabd39efca81f585ed93893544"
+      sha256: "00b80053063935cf9a6190da344c5373b9d0e92da4c944c878ff2fbef0ef6dc2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0-beta-1"
+    version: "1.3.1"
   process:
     dependency: transitive
     description:
