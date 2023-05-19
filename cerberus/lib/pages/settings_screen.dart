@@ -39,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   showAboutDialog(
                       context: context,
                       applicationName: "Cerberus",
-                      applicationVersion: "0.7.4-alpha",
+                      applicationVersion: "0.8.0-alpha",
                       applicationLegalese: "©2023 Cerberus",
                       children: [
                         RichText(
