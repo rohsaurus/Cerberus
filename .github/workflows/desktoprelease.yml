@@ -75,21 +75,32 @@ jobs:
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build windows --release
-      - name: Get Version Number
-        run: # replace old code with python to make it the same for windows and macos, as well as be able to remove the version: part of it
+      - name: Setup Python to get Version Number from Flutter Pubspec
+        uses: actions/setup-python@v4.5.0
+        with:
+          # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: 3.9.12
+      - name: Running Python Script to get Version Number and Exporting to enviornemnt variable
+        working-directory: ./cerberus
+        run: python3 versionGetter.py && $versionNum = cat versionNum.txt
+      - name: Build Windows Installer MSI from exe file
+        uses: AliceOh/CreateWindowsInstaller@1.0.0
+        with:
+          exefile: cerberus/build/windows/runner/Release/cerberus.exe
+          version: $versionNum
       - name: Package Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: cerberus-${{github.ref_name}}-windows.zip
+          filename: cerberus-$versionNum-windows.zip
           directory: cerberus/build/windows/runner/Release
       - name: Release to github
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{github.ref_name}}
-          files: cerberus/build/windows/runner/Release/cerberus-${{github.ref_name}}-windows.zip
+          tag_name: $versionNum
+          files: cerberus/build/windows/runner/Release/cerberus-$versionNum-windows.zip
   macos:
     runs-on: macos-latest
     steps:
