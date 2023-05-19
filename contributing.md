@@ -101,7 +101,7 @@ For the most part it is exactly the same, minus some differences which I will me
 
 ## Adding the Auth Key to your Flutter Project
 
-I've provided an example file (.env.example) to show you what you need. Simply rename the file to .env (removing the example part) and paste in your authorization key, the same one that you used for postman or api tests
+I've provided an example file (.env.example) to show you what you need. Simply rename the file to .env (removing the example part) and paste in your authorization key, the same one that you used for postman or api tests (REALM API Key)
 
 ## Compiling
 
