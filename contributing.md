@@ -105,7 +105,7 @@ I've provided an example file (.env.example) to show you what you need. Simply r
 
 ## Compiling
 
-If all the steps above were successful, you should simply be able to run flutter run -d Windows, or clicking the play button on your IDE. Let me know if you have any questions!
+If all the steps above were successful, you should simply be able to run flutter run, or clicking the play button on your IDE. Let me know if you have any questions!
 
 - [Contributing to Cerberus](#contributing-to-cerberus)
 - [First of all, what is Cerberus, and how does it work?](#first-of-all-what-is-cerberus-and-how-does-it-work)
