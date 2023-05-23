@@ -39,7 +39,7 @@ jobs:
       - name: Package Release files
         uses: thedoctor0/zip-release@master
         with:
-          type: 'tar'
+          type: 'zip'
           filename: cerberus-$(versionNum)-linux.tar.gz
           directory: cerberus/build/linux/x64/release/bundle
       - name: Release to github
@@ -82,7 +82,9 @@ jobs:
           python-version: 3.9.12
       - name: Running Python Script to get Version Number and Exporting to enviornemnt variable
         working-directory: ./cerberus
-        run: python3 versionGetter.py && $versionNum = cat versionNum.txt
+        run: |
+          python3 versionGetter.py
+          $env:versionNum = Get-Content versionNum.txt
       - name: Build Windows Installer MSI from exe file
         uses: AliceOh/CreateWindowsInstaller@1.0.0
         with:
