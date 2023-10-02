@@ -1,4 +1,5 @@
 import "dart:io";
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import "package:path/path.dart";
@@ -126,7 +127,8 @@ class _ButtonState extends State<Button> {
                             child: Text("Encrypt"),
                             onPressed: () async {
                               // create percent indicateer to let the user know that the file is being encrypted
-                              if (_emailController.text.isNotEmpty && await _emailExists(_emailController)) {
+                              if (_emailController.text.isNotEmpty &&
+                                  await _emailExists(_emailController)) {
                                 // Lets the user pick one file; files with any file extension can be selected
                                 FilePickerResult? result = await FilePicker
                                     .platform
@@ -136,20 +138,23 @@ class _ButtonState extends State<Button> {
                                   await encryptRunnerMethod(result, context);
                                 }
                               } else {
-                                showDialog(context: context, builder: (context) {
-                                  return AlertDialog(
-                                    title: Text("Error"),
-                                    content: Text("The email you entered does not exist. Please try again."),
-                                    actions: [
-                                      TextButton(
-                                        child: Text("Close"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text(
+                                            "The email you entered does not exist. Please try again."),
+                                        actions: [
+                                          TextButton(
+                                            child: Text("Close"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
                               }
                             },
                           ),
@@ -195,33 +200,43 @@ class _ButtonState extends State<Button> {
 
   Future<void> decryptRunnerMethod(
       FilePickerResult result, BuildContext context) async {
-    // create percent indicateer to let the user know that the file is being encrypted
+    // Show the progress dialog
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Decrypting File"),
-            content: SimpleCircularProgressBar(
-              mergeMode: true,
-              onGetText: (double value) {
-                return Text('${value.toInt()}%');
-              },
-              progressColors: [
-                Color.fromARGB(214, 252, 203, 6),
-              ],
-            ),
-          );
-        });
-    File file =
-        await decryptFiles(result, Button.getEmail(), Button.getPassword());
-        // removing the percent indicater when decryption is complete
-    setState(() {
-      Navigator.of(context).pop();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:
-          Text("Decryption was Succesful!\n File located at: ${file.path}"),
-    ));
+      context: context,
+      barrierDismissible: false, // Prevent dismissal of dialog
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Decrypting File"),
+          content: SimpleCircularProgressBar(
+            mergeMode: true,
+            onGetText: (double value) {
+              return Text('${value.toInt()}%');
+            },
+            progressColors: [
+              Color.fromARGB(214, 252, 203, 6),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Perform decryption in background isolate using `compute`
+    File file = await compute(decryptFilesInBackgroundIsolate, result);
+
+    // Hide the progress dialog
+    Navigator.of(context).pop();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            Text("Decryption was Successful!\nFile located at: ${file.path}"),
+      ),
+    );
+  }
+
+// Function to perform decryption in the background isolate
+  Future<File> decryptFilesInBackgroundIsolate(FilePickerResult result) async {
+    return await decryptFiles(result, Button.getEmail(), Button.getPassword());
   }
 
   Future<void> encryptRunnerMethod(
@@ -229,6 +244,7 @@ class _ButtonState extends State<Button> {
     // create percent indicateer to let the user know that the file is being encrypted
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
             title: Text("Encrypting File"),
@@ -243,16 +259,27 @@ class _ButtonState extends State<Button> {
             ),
           );
         });
-    File file = await encryptFile(result, _emailController.text);
-    setState(() {
-      Navigator.of(context).pop();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Encryption was Succesful!\nFile located at: ${file.path}"),
-    ));
+    // Perform encryption in background isolate using `compute`
+    File file = await compute(encryptFileInBackgroundIsolate, result);
+
+    // Hide the progress dialog
+    Navigator.of(context).pop();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content:
+            Text("Encryption was Successful!\nFile located at: ${file.path}"),
+      ),
+    );
+
     Navigator.pop(context);
   }
-  
+
+// Function to perform encryption in the background isolate
+  Future<File> encryptFileInBackgroundIsolate(FilePickerResult result) async {
+    return await encryptFile(result, _emailController.text);
+  }
+
   Future<bool> _emailExists(TextEditingController emailController) async {
     var email = SignUp.emailOnly(emailController.text);
     return await email.checkUser();
