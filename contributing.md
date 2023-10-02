@@ -33,7 +33,7 @@ Cerberus uses XChaCha20 and RSA to allow you to encrypt any file and send it acr
 
 #### User creates an account
 
-When someone creates an account, a pair of RSA keys are generated. The private key is encrypted with an AES256GCM key derived from the password. Then, the public and encrypted private keys are uploaded to a MongoDB. Meanwhile, the user's password is encrypted using the Argon2 password hashing scheme, and the hashed password is uploaded to the MongoDB database along with their email. Because of the way I implemented the password, there is no way to reset it in order to make sure no one can decrypt the private keys, including me. However, I am more than open for potentially recovery phrase the user can generate and use to recover their account in case of a forgotten password.
+When someone creates an account, a pair of RSA keys are generated. The private key is encrypted with an AES256GCM key derived from the password. Then, the public and encrypted private keys are uploaded to a MongoDB. Meanwhile, the user's password is encrypted using the Argon2 password hashing scheme, and the hashed password is uploaded to the MongoDB database along with their email. Because of the way I implemented the password, there is no way to reset it in order to make sure no one can decrypt the private keys, including me. However, I am open to the potential of a recovery phrase the user can generate and use to recover their account in case of a forgotten password.
 
 #### Logging in
 

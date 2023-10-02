@@ -1,0 +1,92 @@
+name: Flutter Desktop Deployment
+
+on:
+  workflow_dispatch
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.16.1'
+          channel: 'stable'
+      - name: Install os dependencies
+        run: sudo apt update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - name: Install project dependencies
+        working-directory: ./cerberus
+        run: flutter pub get
+      - name: Generate intermediates
+        working-directory: ./cerberus
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Enable linux build
+        working-directory: ./cerberus
+        run: flutter config --enable-linux-desktop
+      - name: Define enviornment variable
+        working-directory: ./cerberus
+        run: echo "AUTH_KEY=${{ secrets.AUTH }}" > .env
+      - name: Build artifacts
+        working-directory: ./cerberus
+        run: flutter build linux --release
+      - name: Setup Python to get Version Number from Flutter Pubspec
+        uses: actions/setup-python@v4.5.0
+        with:
+          # Version range or exact version of Python or PyPy to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: 3.9.12
+      - name: Running Python Script to get Version Number and Exporting to enviornemnt variable
+        working-directory: ./cerberus
+        run: python3 versionGetter.py && versionNum=$(echo $(cat versionNum.txt))
+      - name: Package Release files
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'tar'
+          filename: cerberus-$(versionNum)-linux.tar.gz
+          directory: cerberus/build/linux/x64/release/bundle
+      - name: Release to github
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $(versionNum)
+          files: cerberus/build/linux/x64/release/bundle/cerberus-$(versionNum)-linux.zip
+
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.16.1'
+          channel: 'stable'
+      - name: Install project dependencies
+        working-directory: ./cerberus
+        run: flutter pub get
+      - name: Generate intermediates
+        working-directory: ./cerberus
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Enable windows build
+        working-directory: ./cerberus
+        run: flutter config --enable-windows-desktop
+      - name: Define enviornment variable
+        working-directory: ./cerberus
+        env:
+          KEY_TOKEN: ${{ secrets.AUTH }}
+        run: echo "AUTH_KEY=$KEY_TOKEN" > .env
+      - name: Build artifacts
+        working-directory: ./cerberus
+        run: flutter build windows --release
+      - name: Package Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: cerberus-${{github.ref_name}}-windows.zip
+          directory: cerberus/build/windows/runner/Release
+      - name: Release to github
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{github.ref_name}}
+          files: cerberus/build/windows/runner/Release/cerberus-${{github.ref_name}}-windows.zip
