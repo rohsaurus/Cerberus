@@ -73,7 +73,7 @@ jobs:
         working-directory: ./cerberus
         env:
           KEY_TOKEN: ${{ secrets.AUTH }}
-        run: echo "AUTH_KEY=$KEY_TOKEN" > .env
+        run: echo "AUTH_KEY=$env:KEY_TOKEN" > .env
       - name: Build artifacts
         working-directory: ./cerberus
         run: flutter build windows --release
