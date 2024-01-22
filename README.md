@@ -13,7 +13,7 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
 
-> MacOS is the only one not building
+> The Cerberus Releases no longer work as I am no longer running the database to store encrypted keys and user credientials. The program still works, you just need to compile it and run your own MongoDB instance. See contributing.md for details
 
 Cerberus uses XChaCha20 and RSA to allow you to encrypt any file and send it across the web securly, without the need to share a password! No longer do you need to text the password to the recipient, or send an email with an attached RSA key. Instead, simply fire up Cerberus and type in the email of the recipient. Then send the encrypted file to the recipient, where all your friend needs to do is simply open up the file with Cerberus! No need to enter in a password, or import some RSA key!
 
