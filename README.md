@@ -1,17 +1,12 @@
 <h1 align="center">Welcome to Cerberus 👋</h1>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-
 </a>
   <a href="https://github.com/rohsaurus/Cerberus/blob/Main/License" target="_blank">
     <img alt="License: BSD--3" src="https://img.shields.io/badge/License-BSD--3-yellow.svg" />
   </a>
-
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/rohsaurus/Cerberus/desktoprelease.yml)
 
 > The Cerberus Releases no longer work as I am no longer running the database to store encrypted keys and user credientials. The program still works, you just need to compile it and run your own MongoDB instance. See contributing.md for details
 
